@@ -1,8 +1,6 @@
 package com.web.tempalte.user.domain;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,10 +9,12 @@ import javax.persistence.Id;
 
 @Entity
 @Getter
+@EqualsAndHashCode(of = "id")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Account {
 
     @Id
+    @Setter
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
@@ -25,8 +25,6 @@ public class Account {
     private String password;
 
     public Account(String name, String username, String password) {
-
-
         this.name = name;
         this.username = username;
         this.password = password;

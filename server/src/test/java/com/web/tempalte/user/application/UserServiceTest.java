@@ -1,5 +1,6 @@
 package com.web.tempalte.user.application;
 
+import com.web.tempalte.common.AbstractServiceHelper;
 import com.web.tempalte.user.application.data.AccountAddCommand;
 import com.web.tempalte.user.application.data.AccountPresentation;
 import org.hamcrest.CoreMatchers;
@@ -16,10 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(properties = "classpath:application-test.properties")
 @Transactional
-public class UserServiceTest {
+public class UserServiceTest extends AbstractServiceHelper {
 
     @Autowired
     private AccountService accountService;
