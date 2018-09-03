@@ -10,6 +10,8 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.NoSuchElementException;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -55,5 +57,19 @@ public class BoardServiceTest extends AbstractServiceHelper {
 
         // Then
         assertEquals("변경된 컨텐츠 내용 출력", updateContentText, result.getContent());
+    }
+
+    @Test(expected = NoSuchElementException.class)
+    public void delete() {
+        // Given
+        AccountPresentation account = accountService.create(new AccountAddCommand("test", "test", "test", "USER"));
+        BoardPresentation board = boardService.create(new BoardAddCommand("test title" , "test content"), account.getId());
+
+        // When
+        boardService.delete(board.getId(), account.getId());
+        BoardPresentation boardPresentation = boardService.get(board.getId());
+
+        // Then
+
     }
 }

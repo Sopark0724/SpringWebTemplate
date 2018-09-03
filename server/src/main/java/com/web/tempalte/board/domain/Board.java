@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
-import java.security.InvalidParameterException;
 import java.util.Date;
 
 @Entity
@@ -38,7 +37,19 @@ public class Board {
     }
 
     public boolean canUpdate(Account requestUser){
-        return this.user.equals(requestUser);
+        return this.isOwner(requestUser);
+    }
+
+    public boolean canDelete(Account requestUser) {
+        return this.isOwner(requestUser);
+    }
+
+    public boolean canNotDelete(Account requestUser) {
+        return !this.canDelete(requestUser);
+    }
+
+    private boolean isOwner(Account requestUser) {
+        return this.user.getId().equals(requestUser.getId());
     }
 
     public boolean canNotUpdate(Account requestUser) {
@@ -58,5 +69,9 @@ public class Board {
     public void update(String title, String contents) {
         this.title = title;
         this.contents = contents;
+    }
+
+    public String getWriterName() {
+        return this.user.getName();
     }
 }
