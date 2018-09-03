@@ -1,19 +1,17 @@
 package com.web.tempalte.user.api;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.web.tempalte.TemplateApplication;
 import com.web.tempalte.common.MockMvcHelper;
-import com.web.tempalte.user.application.AccountService;
+import com.web.tempalte.user.model.AccountDetails;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -25,6 +23,9 @@ public class AccountControllerTest {
     @Autowired
     private MockMvcHelper mockMvcHelper;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     @Test
     public void create() throws Exception {
         // Given
@@ -33,8 +34,30 @@ public class AccountControllerTest {
         // When
         ResultActions resultAction =
                 mockMvcHelper.perform(
-                    post("/account/create")
-                        .content(requestPayload)
+                        post("/account/create")
+                                .content(requestPayload)
+                );
+
+        // Then
+        resultAction
+                .andDo(print())
+                .andExpect(status().isOk());
+
+    }
+
+    @Test
+    public void login() throws Exception{
+        // Given
+        AccountDetails accountDetails = new AccountDetails();
+        accountDetails.setUsername("test2");
+        accountDetails.setPassword("1234");
+
+        // When
+        ResultActions resultAction =
+                mockMvcHelper.perform(
+                        post("/account/login")
+                                .content(objectMapper.writeValueAsString(accountDetails))
+
                 );
 
         // Then
