@@ -1,6 +1,8 @@
 package com.web.tempalte.user.domain;
 
 import lombok.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.util.StringUtils;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -24,9 +26,20 @@ public class Account {
 
     private String password;
 
-    public Account(String name, String username, String password) {
+    private String role;
+
+    public Account(String name, String username, String password, String role) {
         this.name = name;
         this.username = username;
         this.password = password;
+        this.role = role;
+    }
+
+    public Account encryptPassword(PasswordEncoder passwordEncoder) {
+        if (StringUtils.isEmpty(this.password)) {
+            return this;
+        }
+        this.password = passwordEncoder.encode(this.password);
+        return this;
     }
 }
