@@ -1,9 +1,35 @@
 package com.web.tempalte.board.api;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.web.tempalte.board.application.BoardService;
+import com.web.tempalte.board.application.data.BoardAddCommand;
+import com.web.tempalte.board.application.data.BoardPresentation;
+import com.web.tempalte.security.SpringSecurityContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/board")
 public class BoardController {
+
+    @Autowired
+    private BoardService boardService;
+
+    @Autowired
+    private SpringSecurityContext context;
+
+    @PostMapping("/board")
+    public BoardPresentation create(BoardAddCommand boardAddCommand) {
+        return boardService.create(boardAddCommand, context.getAccount().getId());
+    }
+
+    @PutMapping("/board/{boardId}")
+    public BoardPresentation update(@PathVariable Long boardId, BoardAddCommand boardAddCommand) {
+        return boardService.update(boardId, boardAddCommand, context.getAccount().getId());
+    }
+
+    @DeleteMapping("/board/{boardId}")
+    @ResponseStatus(value = HttpStatus.OK)
+    public void delete(@PathVariable Long boardId) {
+        boardService.delete(boardId, context.getAccount().getId());
+    }
 }
