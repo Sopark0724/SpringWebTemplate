@@ -9,6 +9,7 @@ import com.web.tempalte.user.domain.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.security.InvalidParameterException;
 import java.util.NoSuchElementException;
 
 @Service
@@ -23,6 +24,22 @@ public class BoardService {
         Account account = accountRepository.findById(userId).orElseThrow(() -> new NoSuchElementException());
         Board board = boardRepository.save(new Board(account, boardAddCommand.getTitle(), boardAddCommand.getContents()));
 
-        return new BoardPresentation(account.getName(), board.getTitle(), board.getContents(), board.getCreatedAt(), board.getUpdatedAt());
+        return new BoardPresentation(board.getId(), account.getName(), board.getTitle(), board.getContents(), board.getCreatedAt(), board.getUpdatedAt());
+    }
+
+    public BoardPresentation update(Long boardId, BoardAddCommand boardAddCommand, Long userId) {
+        Account account = accountRepository.findById(userId).orElseThrow(() -> new NoSuchElementException());
+        Board board = boardRepository.findById(boardId).orElseThrow(() -> new NoSuchElementException());
+
+        if(board.canNotUpdate(account)){
+            throw new InvalidParameterException();
+        }
+
+        board.update(boardAddCommand.getTitle(), boardAddCommand.getContents());
+
+        boardRepository.save(board);
+
+        return new BoardPresentation(board.getId(), account.getName(), board.getTitle(), board.getContents(), board.getCreatedAt(), board.getUpdatedAt());
+
     }
 }
