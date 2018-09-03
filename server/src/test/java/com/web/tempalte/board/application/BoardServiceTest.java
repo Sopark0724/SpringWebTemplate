@@ -3,11 +3,15 @@ package com.web.tempalte.board.application;
 import com.web.tempalte.board.application.data.BoardAddCommand;
 import com.web.tempalte.board.application.data.BoardPresentation;
 import com.web.tempalte.common.AbstractServiceHelper;
+import com.web.tempalte.common.application.data.PageListCommand;
 import com.web.tempalte.user.application.AccountService;
 import com.web.tempalte.user.application.data.AccountAddCommand;
 import com.web.tempalte.user.application.data.AccountPresentation;
+import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.NoSuchElementException;
@@ -19,6 +23,7 @@ import static org.junit.Assert.assertNotNull;
 public class BoardServiceTest extends AbstractServiceHelper {
 
     @Autowired
+    @Qualifier(value = "boardServiceJPAImpl")
     private BoardService boardService;
 
     @Autowired
@@ -71,6 +76,25 @@ public class BoardServiceTest extends AbstractServiceHelper {
         BoardPresentation boardPresentation = boardService.get(board.getId());
 
         // Then
+
+    }
+
+    @Test
+    public void getList() {
+        // Given
+        AccountPresentation account = accountService.create(new AccountAddCommand("test", "test", "test", "USER"));
+        boardService.create(new BoardAddCommand("test title" , "test content"), account.getId());
+        boardService.create(new BoardAddCommand("test title" , "test content"), account.getId());
+        boardService.create(new BoardAddCommand("test title" , "test content"), account.getId());
+
+        PageListCommand pageListCommand = new PageListCommand(0, 10, "","");
+
+        // When
+        Page<BoardPresentation> pageList = boardService.getList(pageListCommand);
+
+        // Then
+        Assert.assertEquals("리스트의 총개수는 3개", 3, pageList.getTotalElements());
+        Assert.assertEquals("리스트의 페이지는 1번", 1, pageList.getTotalPages());
 
     }
 }

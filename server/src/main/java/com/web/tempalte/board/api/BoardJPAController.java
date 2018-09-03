@@ -3,15 +3,20 @@ package com.web.tempalte.board.api;
 import com.web.tempalte.board.application.BoardService;
 import com.web.tempalte.board.application.data.BoardAddCommand;
 import com.web.tempalte.board.application.data.BoardPresentation;
+import com.web.tempalte.common.application.data.PageListCommand;
 import com.web.tempalte.security.SpringSecurityContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-public class BoardController {
+@RequestMapping("/v1")
+public class BoardJPAController {
 
     @Autowired
+    @Qualifier(value = "boardServiceJPAImpl")
     private BoardService boardService;
 
     @Autowired
@@ -31,5 +36,10 @@ public class BoardController {
     @ResponseStatus(value = HttpStatus.OK)
     public void delete(@PathVariable Long boardId) {
         boardService.delete(boardId, context.getAccount().getId());
+    }
+
+    @GetMapping
+    public Page<BoardPresentation> getList(PageListCommand pageListCommand){
+        return boardService.getList(pageListCommand);
     }
 }
