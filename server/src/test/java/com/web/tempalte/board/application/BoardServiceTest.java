@@ -8,6 +8,7 @@ import com.web.tempalte.user.application.data.AccountAddCommand;
 import com.web.tempalte.user.application.data.AccountPresentation;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.NoSuchElementException;
@@ -19,6 +20,7 @@ import static org.junit.Assert.assertNotNull;
 public class BoardServiceTest extends AbstractServiceHelper {
 
     @Autowired
+    @Qualifier(value = "boardServiceJPAImpl")
     private BoardService boardService;
 
     @Autowired

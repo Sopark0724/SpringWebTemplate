@@ -5,13 +5,16 @@ import com.web.tempalte.board.application.data.BoardAddCommand;
 import com.web.tempalte.board.application.data.BoardPresentation;
 import com.web.tempalte.security.SpringSecurityContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-public class BoardController {
+@RequestMapping("/v1")
+public class BoardJPAController {
 
     @Autowired
+    @Qualifier(value = "boardServiceJPAImpl")
     private BoardService boardService;
 
     @Autowired
