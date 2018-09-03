@@ -25,7 +25,7 @@ public class BoardServiceTest extends AbstractServiceHelper {
     @Test
     public void createTest(){
         // Given
-        AccountPresentation account = accountService.create(new AccountAddCommand("test", "test", "test"));
+        AccountPresentation account = accountService.create(new AccountAddCommand("test", "test", "test", "ADMIN"));
         String title = "title test";
         String content = "cotent test";
         BoardAddCommand boardAddCommand = new BoardAddCommand(title, content);
