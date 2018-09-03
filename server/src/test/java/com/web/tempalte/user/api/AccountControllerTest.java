@@ -33,7 +33,7 @@ public class AccountControllerTest {
         // When
         ResultActions resultAction =
                 mockMvcHelper.perform(
-                    post("/account")
+                    post("/account/create")
                         .content(requestPayload)
                 );
 

@@ -6,12 +6,12 @@ import com.web.tempalte.common.AbstractServiceHelper;
 import com.web.tempalte.user.application.AccountService;
 import com.web.tempalte.user.application.data.AccountAddCommand;
 import com.web.tempalte.user.application.data.AccountPresentation;
-import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 @Transactional
 public class BoardServiceTest extends AbstractServiceHelper {
@@ -25,7 +25,7 @@ public class BoardServiceTest extends AbstractServiceHelper {
     @Test
     public void createTest(){
         // Given
-        AccountPresentation account = accountService.create(new AccountAddCommand("test", "test", "test"));
+        AccountPresentation account = accountService.create(new AccountAddCommand("test", "test", "test", "USER"));
         String title = "title test";
         String content = "cotent test";
         BoardAddCommand boardAddCommand = new BoardAddCommand(title, content);
@@ -39,4 +39,21 @@ public class BoardServiceTest extends AbstractServiceHelper {
         assertEquals(content, board.getContent());
     }
 
+
+    @Test
+    public void update() {
+        // Given
+        AccountPresentation account = accountService.create(new AccountAddCommand("test", "test", "test", "USER"));
+        String originTitle = "board test";
+        String originContent = "content test";
+        BoardPresentation board = boardService.create(new BoardAddCommand(originTitle, originContent), account.getId());
+
+        // When
+        String updateContentText = "update content test";
+        BoardAddCommand boardAddCommand = new BoardAddCommand(originTitle, updateContentText);
+        BoardPresentation result = boardService.update(board.getId(), boardAddCommand, account.getId());
+
+        // Then
+        assertEquals("변경된 컨텐츠 내용 출력", updateContentText, result.getContent());
+    }
 }

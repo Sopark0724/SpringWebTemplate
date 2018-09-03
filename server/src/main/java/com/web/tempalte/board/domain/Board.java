@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import java.security.InvalidParameterException;
 import java.util.Date;
 
 @Entity
@@ -36,8 +37,12 @@ public class Board {
         this.contents = contents;
     }
 
-    public boolean canUpdate(Account user){
-        return this.user.equals(user);
+    public boolean canUpdate(Account requestUser){
+        return this.user.equals(requestUser);
+    }
+
+    public boolean canNotUpdate(Account requestUser) {
+        return !this.canUpdate(requestUser);
     }
 
     @PrePersist
@@ -48,5 +53,10 @@ public class Board {
     @PreUpdate
     public void preUpdate(){
         this.updatedAt = new Date();
+    }
+
+    public void update(String title, String contents) {
+        this.title = title;
+        this.contents = contents;
     }
 }
