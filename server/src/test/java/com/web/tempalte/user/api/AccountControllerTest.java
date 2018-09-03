@@ -57,6 +57,7 @@ public class AccountControllerTest {
                 mockMvcHelper.perform(
                         post("/account/login")
                                 .content(objectMapper.writeValueAsString(accountDetails))
+
                 );
 
         // Then

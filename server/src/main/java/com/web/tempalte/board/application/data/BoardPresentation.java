@@ -7,6 +7,8 @@ import java.util.Date;
 @Value
 public class BoardPresentation {
 
+    private Long id;
+
     private String userName;
 
     private String title;

@@ -11,7 +11,8 @@ public class BoardTest {
     @Test
     public void canUpdate_자신이쓴글() {
         // Given
-        Account account = new Account("test1", "login1", "123123", "ADMIN");
+
+        Account account = new Account("test1", "login1", "123123", "USER");
         account.setId(1L);
         Board board = new Board(account, "title test", "content test");
 
@@ -26,9 +27,11 @@ public class BoardTest {
     @Test
     public void canUpdate_다른사람이쓴글() {
         // Given
-        Account account = new Account("test1", "login1", "123123", "ADMIN");
+
+        Account account = new Account("test1", "login1", "123123", "USER");
         account.setId(1L);
-        Account account2 = new Account("test1", "login1", "123123", "ADMIN");
+        Account account2 = new Account("test1", "login1", "123123", "USER");
+
         account.setId(2L);
         Board board = new Board(account, "title test", "content test");
 

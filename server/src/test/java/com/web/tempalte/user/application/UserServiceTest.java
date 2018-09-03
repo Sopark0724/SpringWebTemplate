@@ -26,7 +26,8 @@ public class UserServiceTest extends AbstractServiceHelper {
     @Test
     public void create() {
         // Given
-        AccountAddCommand accountAddCommand = new AccountAddCommand("홍길동", "test1", "1234", "ADMIN");
+
+        AccountAddCommand accountAddCommand = new AccountAddCommand("홍길동", "test1", "1234", "USER");
 
         // When
         AccountPresentation accountPresentation = accountService.create(accountAddCommand);
