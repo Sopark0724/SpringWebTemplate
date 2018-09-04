@@ -25,12 +25,29 @@ public class BoardServiceMyBatisImpl implements BoardService {
     private final @NonNull
     AccountDao accountDao;
 
-    @Override
-    public BoardPresentation create(BoardAddCommand boardAddCommand, Long creatorId) {
-        AccountDto account = this.accountDao.findById(creatorId);
+
+    private AccountDto getAccount(Long id) {
+        AccountDto account = this.accountDao.findById(id);
         if (account == null) {
             throw new NoSuchElementException();
         }
+        return account;
+    }
+
+    private BoardDto getBoard(Long id) {
+
+        BoardDto board = this.boardDao.findById(id);
+
+        if (board == null) {
+            throw new NoSuchElementException();
+        }
+        return board;
+    }
+
+    @Override
+    public BoardPresentation create(BoardAddCommand boardAddCommand, Long creatorId) {
+
+        AccountDto account = this.getAccount(creatorId);
 
         BoardDto board = this.boardDao.save(new BoardDto(account, boardAddCommand.getTitle(), boardAddCommand.getContents()));
         return BoardPresentation.convertFromDto(board, account);
@@ -38,11 +55,8 @@ public class BoardServiceMyBatisImpl implements BoardService {
 
     @Override
     public BoardPresentation update(Long boardId, BoardAddCommand boardAddCommand, Long requestUserId) {
-        AccountDto account = this.accountDao.findById(requestUserId);
-        BoardDto board = this.boardDao.findById(boardId);
-        if (account == null || board == null) {
-            throw new NoSuchElementException();
-        }
+        AccountDto account = this.getAccount(requestUserId);
+        BoardDto board = this.getBoard(boardId);
 
         if (board.canNotUpdate(account)) {
             throw new InvalidParameterException();
@@ -57,12 +71,20 @@ public class BoardServiceMyBatisImpl implements BoardService {
 
     @Override
     public void delete(Long id, Long requestUserId) {
+        AccountDto account = this.getAccount(requestUserId);
+        BoardDto board = this.getBoard(id);
+        if (board.canNotDelete(account)) {
+            throw new InvalidParameterException();
+        }
 
+        this.boardDao.delete(board);
     }
 
     @Override
     public BoardPresentation get(Long boardId) {
-        return null;
+        BoardDto board = this.getBoard(boardId);
+        AccountDto account = this.getAccount(board.getUser_id());
+        return new BoardPresentation(board.getId(), account.getName(), board.getTitle(), board.getContents(), board.getCreated_at(), board.getUpdated_at());
     }
 
     @Override
