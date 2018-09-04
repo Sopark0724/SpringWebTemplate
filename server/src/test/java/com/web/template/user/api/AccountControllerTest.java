@@ -3,6 +3,7 @@ package com.web.template.user.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.web.template.TemplateApplication;
 import com.web.template.common.MockMvcHelper;
+import com.web.template.user.domain.dto.AccountDto;
 import com.web.template.user.model.AccountDetails;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,7 +29,7 @@ public class AccountControllerTest {
     @Test
     public void create() throws Exception {
         // Given
-        String requestPayload = "{\"name\" : \"길동이\", \"username\" : \"test2\", \"password\" : \"1234\"}";
+        String requestPayload = "{\"name\" : \"tester\", \"role\" : \"USER\",\"username\" : \"test2\", \"password\" : \"1234\"}";
 
         // When
         ResultActions resultAction =
@@ -47,15 +48,13 @@ public class AccountControllerTest {
     @Test
     public void login() throws Exception{
         // Given
-        AccountDetails accountDetails = new AccountDetails();
-        accountDetails.setUsername("test2");
-        accountDetails.setPassword("1234");
+        String requestPayload = "{\"name\" : \"tester\", \"role\" : \"USER\",\"username\" : \"test2\", \"password\" : \"1234\"}";
 
         // When
         ResultActions resultAction =
                 mockMvcHelper.perform(
                         post("/account/login")
-                                .content(objectMapper.writeValueAsString(accountDetails))
+                                .content(requestPayload)
 
                 );
 

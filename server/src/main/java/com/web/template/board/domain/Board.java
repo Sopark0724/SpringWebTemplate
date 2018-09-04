@@ -4,7 +4,6 @@ import com.web.template.user.domain.Account;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
@@ -17,7 +16,6 @@ public class Board {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Setter
     private Long id;
 
     @ManyToOne
@@ -29,11 +27,24 @@ public class Board {
 
     private Date updatedAt;
 
-    @Transient
-    private Long userId;
 
     @Type(type = "org.hibernate.type.TextType")
     private String contents;
+
+
+    public void initId(Long id) {
+        if (this.id != null) {
+            return;
+        }
+        this.id = id;
+    }
+
+    public void initUser(Account user) {
+        if(this.user != null){
+            return;
+        }
+        this.user = user;
+    }
 
     public Board(Account user, String title, String contents) {
         this.user = user;
@@ -41,7 +52,7 @@ public class Board {
         this.contents = contents;
     }
 
-    public boolean canUpdate(Account requestUser){
+    public boolean canUpdate(Account requestUser) {
         return this.isOwner(requestUser);
     }
 
@@ -54,7 +65,9 @@ public class Board {
     }
 
     private boolean isOwner(Account requestUser) {
-        if(this.user == null){ return false; }
+        if (this.user == null) {
+            return false;
+        }
         return this.user.getId().equals(requestUser.getId());
     }
 
@@ -63,12 +76,12 @@ public class Board {
     }
 
     @PrePersist
-    public void prePersist(){
+    public void prePersist() {
         this.createdAt = new Date();
     }
 
     @PreUpdate
-    public void preUpdate(){
+    public void preUpdate() {
         this.updatedAt = new Date();
     }
 
@@ -78,7 +91,9 @@ public class Board {
     }
 
     public String getWriterName() {
-        if(this.user == null){ return ""; }
+        if (this.user == null) {
+            return "";
+        }
         return this.user.getName();
     }
 }

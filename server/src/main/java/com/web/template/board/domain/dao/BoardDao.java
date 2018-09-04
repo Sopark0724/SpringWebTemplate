@@ -1,6 +1,6 @@
 package com.web.template.board.domain.dao;
 
-import com.web.template.board.domain.Board;
+import com.web.template.board.domain.dto.BoardDto;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.session.SqlSession;
@@ -21,19 +21,19 @@ public class BoardDao {
         return nextId != null ? nextId : 1L;
     }
 
-    public List<Board> findAll() {
+    public List<BoardDto> findAll() {
         return this.sqlSession.selectList("findBoardAll");
     }
 
-    public Board findById(Long id){
+    public BoardDto findById(Long id) {
         return this.sqlSession.selectOne("findBoardById", id);
     }
 
-    public List<Board> saveAll(List<Board> boardList) {
+    public List<BoardDto> saveAll(List<BoardDto> boardList) {
         return boardList.stream().map(this::save).collect(Collectors.toList());
     }
 
-    public Board save(Board board) {
+    public BoardDto save(BoardDto board) {
         if (board.getId() != null) {
             this.sqlSession.update("updateBoard", board);
         } else {
@@ -43,11 +43,11 @@ public class BoardDao {
         return this.sqlSession.selectOne("findBoardById", board.getId());
     }
 
-    public void deleteAll(List<Board> boardList){
+    public void deleteAll(List<BoardDto> boardList) {
         boardList.forEach(this::delete);
     }
 
-    public void delete(Board board){
+    public void delete(BoardDto board) {
         this.sqlSession.delete("deleteBoard", board);
     }
 

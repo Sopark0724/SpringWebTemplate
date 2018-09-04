@@ -1,7 +1,7 @@
 package com.web.template.board.application;
 
-import com.web.template.board.domain.Board;
 import com.web.template.board.domain.dao.BoardDao;
+import com.web.template.board.domain.dto.BoardDto;
 import com.web.template.common.AbstractServiceHelper;
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
@@ -19,15 +19,15 @@ public class BoardDaoTest extends AbstractServiceHelper {
 
     @Test
     public void mybatis_01_InsertTest() {
-        Board board = new Board(null, "mybatis title", "test mybatis content");
+        BoardDto board = new BoardDto(null, "mybatis title", "test mybatis content");
         board = this.boardDao.save(board);
         Assert.assertNotNull(board.getId());
     }
 
     @Test
     public void mybatis_02_FindAllTest() {
-        List<Board> boardList = this.boardDao.findAll();
-        Assert.assertNotEquals(boardList.size() , 0 );
+        List<BoardDto> boardList = this.boardDao.findAll();
+        Assert.assertNotEquals(boardList.size(), 0);
     }
 
 }

@@ -1,6 +1,6 @@
 package com.web.template.user.domain.dao;
 
-import com.web.template.user.domain.Account;
+import com.web.template.user.domain.dto.AccountDto;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.session.SqlSession;
@@ -21,19 +21,19 @@ public class AccountDao {
         return nextId != null ? nextId : 1L;
     }
 
-    public List<Account> findAll() {
+    public List<AccountDto> findAll() {
         return this.sqlSession.selectList("findAccountAll");
     }
 
-    public Account findById(Long id) {
+    public AccountDto findById(Long id) {
         return this.sqlSession.selectOne("findAccountById", id);
     }
 
-    public List<Account> saveAll(List<Account> accountList) {
+    public List<AccountDto> saveAll(List<AccountDto> accountList) {
         return accountList.stream().map(this::save).collect(Collectors.toList());
     }
 
-    public Account save(Account account) {
+    public AccountDto save(AccountDto account) {
         if (account.getId() != null) {
             this.sqlSession.update("updateAccount", account);
         } else {
@@ -43,11 +43,11 @@ public class AccountDao {
         return this.sqlSession.selectOne("findAccountById", account.getId());
     }
 
-    public void deleteAll(List<Account> accountList) {
+    public void deleteAll(List<AccountDto> accountList) {
         accountList.forEach(this::delete);
     }
 
-    public void delete(Account account) {
+    public void delete(AccountDto account) {
         this.sqlSession.delete("deleteAccount", account);
     }
 

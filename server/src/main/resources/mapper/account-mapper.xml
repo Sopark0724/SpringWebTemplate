@@ -6,11 +6,11 @@
         select * from account
     </select>
 
-    <select id="findAccountById" resultType="com.web.template.user.domain.Account">
+    <select id="findAccountById" resultType="com.web.template.user.domain.dto.AccountDto">
         select * from account where id = #{id}
     </select>
 
-    <select id="findAccountFirstOrderByIdDesc" resultType="com.web.template.user.domain.Account">
+    <select id="findAccountFirstOrderByIdDesc" resultType="com.web.template.user.domain.dto.AccountDto">
         select * from account order by id desc limit 0, 1
     </select>
 
@@ -18,18 +18,18 @@
         select (max(id) +1) from account
     </select>
 
-    <update id="updateAccount" parameterType="com.web.template.user.domain.Account">
+    <update id="updateAccount" parameterType="com.web.template.user.domain.dto.AccountDto">
         update account set name = #{name} , password=#{password} , role= #{role} , username= #{username}
         where id = #{id}
     </update>
 
-    <insert id="insertAccount" parameterType="com.web.template.user.domain.Account">
+    <insert id="insertAccount" parameterType="com.web.template.user.domain.dto.AccountDto">
         insert into account
         (id, name, password, role, username)
         values (#{id}, #{name}, #{password}, #{role}, #{username})
     </insert>
 
-    <delete id="deleteAccount" parameterType="com.web.template.user.domain.Account">
+    <delete id="deleteAccount" parameterType="com.web.template.user.domain.dto.AccountDto">
         delete from account
         where id = #{id}
     </delete>

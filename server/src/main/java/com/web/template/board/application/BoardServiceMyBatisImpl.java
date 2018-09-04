@@ -4,9 +4,11 @@ import com.web.template.board.application.data.BoardAddCommand;
 import com.web.template.board.application.data.BoardPresentation;
 import com.web.template.board.domain.Board;
 import com.web.template.board.domain.dao.BoardDao;
+import com.web.template.board.domain.dto.BoardDto;
 import com.web.template.common.application.data.PageListCommand;
 import com.web.template.user.domain.Account;
 import com.web.template.user.domain.dao.AccountDao;
+import com.web.template.user.domain.dto.AccountDto;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -26,13 +28,13 @@ public class BoardServiceMyBatisImpl implements BoardService {
 
     @Override
     public BoardPresentation create(BoardAddCommand boardAddCommand, Long creatorId) {
-        Account account = this.accountDao.findById(creatorId);
+        AccountDto account = this.accountDao.findById(creatorId);
         if (account == null) {
             throw new NoSuchElementException();
         }
 
-        Board board = this.boardDao.save(new Board(account, boardAddCommand.getTitle(), boardAddCommand.getContents()));
-        return BoardPresentation.convertFromEntity(board);
+        BoardDto board = this.boardDao.save(new BoardDto(account, boardAddCommand.getTitle(), boardAddCommand.getContents()));
+        return BoardPresentation.convertFromDto(board, account);
     }
 
     @Override
