@@ -1,6 +1,5 @@
 package com.web.template.board.domain.dto;
 
-import com.web.template.user.domain.Account;
 import com.web.template.user.domain.dto.AccountDto;
 import lombok.Data;
 
@@ -18,30 +17,30 @@ public class BoardDto {
 
 
     public BoardDto(AccountDto user, String title, String contents) {
-        if(user != null) {
+        if (user != null) {
             this.user_id = user.getId();
         }
         this.title = title;
         this.contents = contents;
     }
 
-    public boolean canUpdate(Account requestUser) {
+    public boolean canUpdate(AccountDto requestUser) {
         return this.isOwner(requestUser);
     }
 
-    public boolean canDelete(Account requestUser) {
+    public boolean canDelete(AccountDto requestUser) {
         return this.isOwner(requestUser);
     }
 
-    public boolean canNotDelete(Account requestUser) {
+    public boolean canNotDelete(AccountDto requestUser) {
         return !this.canDelete(requestUser);
     }
 
-    private boolean isOwner(Account requestUser) {
+    private boolean isOwner(AccountDto requestUser) {
         return this.user_id.equals(requestUser.getId());
     }
 
-    public boolean canNotUpdate(Account requestUser) {
+    public boolean canNotUpdate(AccountDto requestUser) {
         return !this.canUpdate(requestUser);
     }
 

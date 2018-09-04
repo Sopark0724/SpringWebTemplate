@@ -2,11 +2,9 @@ package com.web.template.board.application;
 
 import com.web.template.board.application.data.BoardAddCommand;
 import com.web.template.board.application.data.BoardPresentation;
-import com.web.template.board.domain.Board;
 import com.web.template.board.domain.dao.BoardDao;
 import com.web.template.board.domain.dto.BoardDto;
 import com.web.template.common.application.data.PageListCommand;
-import com.web.template.user.domain.Account;
 import com.web.template.user.domain.dao.AccountDao;
 import com.web.template.user.domain.dto.AccountDto;
 import lombok.NonNull;
@@ -14,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import java.security.InvalidParameterException;
 import java.util.NoSuchElementException;
 
 @Service("boardServiceMyBatisImpl")
@@ -39,7 +38,21 @@ public class BoardServiceMyBatisImpl implements BoardService {
 
     @Override
     public BoardPresentation update(Long boardId, BoardAddCommand boardAddCommand, Long requestUserId) {
-        return null;
+        AccountDto account = this.accountDao.findById(requestUserId);
+        BoardDto board = this.boardDao.findById(boardId);
+        if (account == null || board == null) {
+            throw new NoSuchElementException();
+        }
+
+        if (board.canNotUpdate(account)) {
+            throw new InvalidParameterException();
+        }
+
+        board.update(boardAddCommand.getTitle(), boardAddCommand.getContents());
+
+        board = this.boardDao.save(board);
+
+        return new BoardPresentation(board.getId(), account.getName(), board.getTitle(), board.getContents(), board.getCreated_at(), board.getUpdated_at());
     }
 
     @Override
