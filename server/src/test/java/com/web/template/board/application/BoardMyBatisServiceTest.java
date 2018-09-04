@@ -47,4 +47,21 @@ public class BoardMyBatisServiceTest extends AbstractServiceHelper {
         assertEquals(content, board.getContent());
     }
 
+
+    @Test
+    public void update() {
+        // Given
+        AccountPresentation account = accountService.create(new AccountAddCommand("test", "test", "test", "USER"));
+        String originTitle = "board test";
+        String originContent = "content test";
+        BoardPresentation board = boardService.create(new BoardAddCommand(originTitle, originContent), account.getId());
+
+        // When
+        String updateContentText = "update content test";
+        BoardAddCommand boardAddCommand = new BoardAddCommand(originTitle, updateContentText);
+        BoardPresentation result = boardService.update(board.getId(), boardAddCommand, account.getId());
+
+        // Then
+        assertEquals("변경된 컨텐츠 내용 출력", updateContentText, result.getContent());
+    }
 }
