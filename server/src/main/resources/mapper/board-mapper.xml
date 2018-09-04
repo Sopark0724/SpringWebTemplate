@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.web.template.board.domain.dao">
+    <select id="findBoardAll" resultType="hashmap">
+        select * from board
+    </select>
+
+    <select id="findBoardById" resultType="Board">
+        select * from board where id = #{id}
+    </select>
+
+    <select id="findBoardFirstOrderByIdDesc" resultType="Board">
+        select * from board order by id desc limit 0, 1
+    </select>
+
+    <select id="findBoardNextId" resultType="Long">
+        select (max(id) +1) from board
+    </select>
+
+    <update id="updateBoard" parameterType="com.web.template.board.domain.Board">
+        update board set contents = #{contents} , title =#{title} , user_id = #{userId} , updated_at = now()
+        where id = #{id}
+    </update>
+
+    <insert id="insertBoard" parameterType="com.web.template.board.domain.Board">
+        insert into board
+        (id, contents, title, user_id, created_at, updated_at)
+        values (#{id}, #{contents}, #{title}, #{user.id}, now(), now())
+    </insert>
+
+    <delete id="deleteBoard" parameterType="com.web.template.board.domain.Board">
+        delete from board
+        where id = #{id}
+    </delete>
+
+</mapper>
