@@ -5,16 +5,20 @@ import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
 import com.web.tempalte.common.application.data.RemoteFileUploadCommand;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.FileInputStream;
 
+@Slf4j
 public class RemoteFileUploader {
 
     public static boolean remoteFileUpload(RemoteFileUploadCommand command){
         File file = new File(command.getLocalFilePath());
 
         System.out.println("=> Connecting to " + command.getHost());
+
+        log.info("=> Connecting to {}", command.getHost());
 
         Session session = null;
         Channel channel = null;
@@ -38,7 +42,7 @@ public class RemoteFileUploader {
             channel.connect();
 
             channelSftp = (ChannelSftp)channel;
-            System.out.println("=> Connected to " + command.getHost());
+            log.info("=> Connected to {}", command.getHost());
 
             in = new FileInputStream(file);
             in = new FileInputStream(file);
@@ -47,6 +51,7 @@ public class RemoteFileUploader {
             channelSftp.put(in, file.getName());
 
             System.out.println("=> Uploaded : " + file.getPath() + " at " + command.getHost());
+            log.info("=> Uploaded : {} at {}", file.getPath(), command.getHost());
         } catch(Exception e) {
             e.printStackTrace();
             return false;
