@@ -8,6 +8,7 @@ import com.web.template.common.model.PageList;
 import com.web.template.security.SpringSecurityContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,8 +39,12 @@ public class BoardMyBatisController {
         boardService.delete(boardId, context.getAccount().getId());
     }
 
-    @GetMapping
-    public PageList<BoardPresentation> getList(PageListCommand pageListCommand) {
-        return boardService.getPageList(pageListCommand);
+    @GetMapping("/boards")
+    public Page<BoardPresentation> getList(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int offset,
+            @RequestParam(required = false) String properties,
+            @RequestParam(required = false) String direction) {
+        return boardService.getList(new PageListCommand(page, offset, properties, direction));
     }
 }

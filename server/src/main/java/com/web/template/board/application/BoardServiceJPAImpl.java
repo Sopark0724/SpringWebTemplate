@@ -86,9 +86,4 @@ public class BoardServiceJPAImpl implements BoardService {
 
         return new PageImpl<>(boardPresentations, list.getPageable(), list.getTotalElements());
     }
-
-    @Override
-    public PageList<BoardPresentation> getPageList(PageListCommand pageListCommand) {
-        return null;
-    }
 }

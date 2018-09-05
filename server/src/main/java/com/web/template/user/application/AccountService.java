@@ -20,7 +20,7 @@ import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
-public class AccountServiceImpl {
+public class AccountService {
 
     private final @NonNull
     AccountRepository userRepository;

@@ -6,14 +6,12 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
 
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Repository
@@ -28,22 +26,11 @@ public class BoardDao {
         return nextId != null ? nextId : 1L;
     }
 
-    public int findBoardCount() {
-        return this.sqlSession.selectOne("BoardDAO.findCountAll");
-    }
-
-    public List<BoardDto> findBoardPage(PageListCommand pageListCommand) {
-        return this.sqlSession.selectList("BoardDAO.findPage", pageListCommand);
-    }
-
-    public List<BoardDto> findAll() {
-        return this.sqlSession.selectList("BoardDAO.findAll");
     public Page<BoardDto> findAll(PageListCommand pageListCommand) {
-        Map<String, String> params = new HashMap<>();
-        List<BoardDto> list = this.sqlSession.selectList("findBoardAll", null, new RowBounds(pageListCommand.getOffset(), pageListCommand.getPage()));
-        int totalCount = this.sqlSession.selectOne("countBoardAll", null);
+        List<BoardDto> list = this.sqlSession.selectList("findBoardAll", null, new RowBounds(pageListCommand.getPage() * pageListCommand.getOffset(), pageListCommand.getOffset()));
+        int totalCount = this.sqlSession.selectOne("findCountAll", null);
 
-        return new PageImpl<>(list, PageRequest.of(pageListCommand.getPage(), totalCount), totalCount);
+        return new PageImpl<>(list, PageRequest.of(pageListCommand.getPage(), pageListCommand.getOffset()), totalCount);
     }
 
     public BoardDto findById(Long id) {
