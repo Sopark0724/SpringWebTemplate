@@ -25,10 +25,10 @@
 
     <select id="findBoardPage" parameterType="com.web.template.common.application.data.PageListCommand" resultType="BoardDto">
         select * from board
-        <if test="properties != null and direction != null and properties.length > 0 and direction.length > 0 ">
-           order by #{properties} #{direction}
+        <if test="sort">
+           order by ${properties} ${direction}
         </if>
-        limit #{currentPoint} , #{offset}
+        limit ${currentPoint} , ${offset}
     </select>
 
 
