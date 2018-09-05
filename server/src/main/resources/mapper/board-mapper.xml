@@ -7,6 +7,10 @@
         select * from board
     </select>
 
+    <select id="findBoardAll" resultType="com.web.template.board.domain.dto.BoardDto">
+        select * from board
+    </select>
+
     <select id="findById" resultType="com.web.template.board.domain.dto.BoardDto">
         select * from board where id = #{id}
     </select>

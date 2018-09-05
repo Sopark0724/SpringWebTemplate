@@ -23,11 +23,4 @@ public class BoardDaoTest extends AbstractServiceHelper {
         board = this.boardDao.save(board);
         Assert.assertNotNull(board.getId());
     }
-
-    @Test
-    public void mybatis_02_FindAllTest() {
-        List<BoardDto> boardList = this.boardDao.findAll();
-        Assert.assertNotEquals(boardList.size(), 0);
-    }
-
 }

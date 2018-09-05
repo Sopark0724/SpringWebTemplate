@@ -4,7 +4,11 @@ import com.web.template.board.domain.dto.BoardDto;
 import com.web.template.common.application.data.PageListCommand;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -22,16 +26,11 @@ public class BoardDao {
         return nextId != null ? nextId : 1L;
     }
 
-    public int findBoardCount() {
-        return this.sqlSession.selectOne("BoardDAO.findCountAll");
-    }
+    public Page<BoardDto> findAll(PageListCommand pageListCommand) {
+        List<BoardDto> list = this.sqlSession.selectList("findBoardAll", null, new RowBounds(pageListCommand.getPage() * pageListCommand.getOffset(), pageListCommand.getOffset()));
+        int totalCount = this.sqlSession.selectOne("findCountAll", null);
 
-    public List<BoardDto> findBoardPage(PageListCommand pageListCommand) {
-        return this.sqlSession.selectList("BoardDAO.findPage", pageListCommand);
-    }
-
-    public List<BoardDto> findAll() {
-        return this.sqlSession.selectList("BoardDAO.findAll");
+        return new PageImpl<>(list, PageRequest.of(pageListCommand.getPage(), pageListCommand.getOffset()), totalCount);
     }
 
     public BoardDto findById(Long id) {

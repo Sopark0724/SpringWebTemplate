@@ -19,6 +19,4 @@ public interface BoardService {
     BoardPresentation get(Long boardId);
 
     Page<BoardPresentation> getList(PageListCommand pageListCommand);
-
-    PageList<BoardPresentation> getPageList(PageListCommand pageListCommand);
 }

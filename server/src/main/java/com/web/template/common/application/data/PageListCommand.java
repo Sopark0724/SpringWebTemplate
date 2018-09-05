@@ -20,5 +20,4 @@ public class PageListCommand {
     public boolean isSort(){
         return !StringUtils.isEmpty(this.properties) && !StringUtils.isEmpty(this.direction);
     }
-
 }
