@@ -4,10 +4,10 @@ import com.web.template.board.application.BoardService;
 import com.web.template.board.application.data.BoardAddCommand;
 import com.web.template.board.application.data.BoardPresentation;
 import com.web.template.common.application.data.PageListCommand;
+import com.web.template.common.model.PageList;
 import com.web.template.security.SpringSecurityContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,7 +39,7 @@ public class BoardMyBatisController {
     }
 
     @GetMapping
-    public Page<BoardPresentation> getList(PageListCommand pageListCommand){
-        return boardService.getList(pageListCommand);
+    public PageList<BoardPresentation> getList(PageListCommand pageListCommand) {
+        return boardService.getPageList(pageListCommand);
     }
 }

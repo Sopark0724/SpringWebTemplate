@@ -5,6 +5,7 @@ import com.web.template.board.application.data.BoardPresentation;
 import com.web.template.board.domain.dao.BoardDao;
 import com.web.template.board.domain.dto.BoardDto;
 import com.web.template.common.application.data.PageListCommand;
+import com.web.template.common.model.PageList;
 import com.web.template.user.domain.dao.AccountDao;
 import com.web.template.user.domain.dto.AccountDto;
 import lombok.NonNull;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.security.InvalidParameterException;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -104,5 +106,23 @@ public class BoardServiceMyBatisImpl implements BoardService {
                 .collect(toList());
 
         return new PageImpl<>(result, list.getPageable(), list.getTotalElements());
+    }
+
+    private BoardPresentation convertDtoToPresentation(BoardDto board){
+        AccountDto account = this.getAccount(board.getUser_id());
+        return new BoardPresentation(board.getId(), account.getName(), board.getTitle(), board.getContents(), board.getCreated_at(), board.getUpdated_at());
+    }
+
+    @Override
+    public PageList<BoardPresentation> getPageList(PageListCommand pageListCommand) {
+        PageList<BoardPresentation> pageList = new PageList<>();
+        List<BoardDto> list = this.boardDao.findBoardPage(pageListCommand);
+
+        pageList.setData(list.stream().map(this::convertDtoToPresentation).collect(Collectors.toList()));
+        pageList.setCurrnetPage(pageListCommand.getPage());
+        pageList.setOffset(pageListCommand.getOffset());
+        pageList.setTotalElements(this.boardDao.findBoardCount());
+        return pageList;
+
     }
 }

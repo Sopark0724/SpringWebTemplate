@@ -24,10 +24,20 @@ public class BoardDao {
     SqlSession sqlSession;
 
     private Long getNextId() {
-        Long nextId = this.sqlSession.selectOne("findBoardNextId");
+        Long nextId = this.sqlSession.selectOne("BoardDAO.findNextId");
         return nextId != null ? nextId : 1L;
     }
 
+    public int findBoardCount() {
+        return this.sqlSession.selectOne("BoardDAO.findCountAll");
+    }
+
+    public List<BoardDto> findBoardPage(PageListCommand pageListCommand) {
+        return this.sqlSession.selectList("BoardDAO.findPage", pageListCommand);
+    }
+
+    public List<BoardDto> findAll() {
+        return this.sqlSession.selectList("BoardDAO.findAll");
     public Page<BoardDto> findAll(PageListCommand pageListCommand) {
         Map<String, String> params = new HashMap<>();
         List<BoardDto> list = this.sqlSession.selectList("findBoardAll", null, new RowBounds(pageListCommand.getOffset(), pageListCommand.getPage()));
@@ -37,7 +47,7 @@ public class BoardDao {
     }
 
     public BoardDto findById(Long id) {
-        return this.sqlSession.selectOne("findBoardById", id);
+        return this.sqlSession.selectOne("BoardDAO.findById", id);
     }
 
     public List<BoardDto> saveAll(List<BoardDto> boardList) {
@@ -46,12 +56,12 @@ public class BoardDao {
 
     public BoardDto save(BoardDto board) {
         if (board.getId() != null) {
-            this.sqlSession.update("updateBoard", board);
+            this.sqlSession.update("BoardDAO.update", board);
         } else {
             board.setId(this.getNextId());
-            this.sqlSession.insert("insertBoard", board);
+            this.sqlSession.insert("BoardDAO.insert", board);
         }
-        return this.sqlSession.selectOne("findBoardById", board.getId());
+        return this.sqlSession.selectOne("BoardDAO.findById", board.getId());
     }
 
     public void deleteAll(List<BoardDto> boardList) {
@@ -59,7 +69,7 @@ public class BoardDao {
     }
 
     public void delete(BoardDto board) {
-        this.sqlSession.delete("deleteBoard", board);
+        this.sqlSession.delete("BoardDAO.delete", board);
     }
 
 }

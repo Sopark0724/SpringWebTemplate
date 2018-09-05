@@ -5,6 +5,7 @@ import com.web.template.board.application.data.BoardPresentation;
 import com.web.template.board.domain.Board;
 import com.web.template.board.domain.BoardRepository;
 import com.web.template.common.application.data.PageListCommand;
+import com.web.template.common.model.PageList;
 import com.web.template.common.util.PageRequestUtil;
 import com.web.template.user.domain.Account;
 import com.web.template.user.domain.AccountRepository;
@@ -84,5 +85,10 @@ public class BoardServiceJPAImpl implements BoardService {
                 .collect(Collectors.toList());
 
         return new PageImpl<>(boardPresentations, list.getPageable(), list.getTotalElements());
+    }
+
+    @Override
+    public PageList<BoardPresentation> getPageList(PageListCommand pageListCommand) {
+        return null;
     }
 }
