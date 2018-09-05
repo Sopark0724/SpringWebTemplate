@@ -17,16 +17,16 @@ public class AccountDao {
     SqlSession sqlSession;
 
     private Long getNextId() {
-        Long nextId = this.sqlSession.selectOne("findAccountNextId");
+        Long nextId = this.sqlSession.selectOne("AccountDAO.findNextId");
         return nextId != null ? nextId : 1L;
     }
 
     public List<AccountDto> findAll() {
-        return this.sqlSession.selectList("findAccountAll");
+        return this.sqlSession.selectList("AccountDAO.findAll");
     }
 
     public AccountDto findById(Long id) {
-        return this.sqlSession.selectOne("findAccountById", id);
+        return this.sqlSession.selectOne("AccountDAO.findById", id);
     }
 
     public List<AccountDto> saveAll(List<AccountDto> accountList) {
@@ -35,12 +35,12 @@ public class AccountDao {
 
     public AccountDto save(AccountDto account) {
         if (account.getId() != null) {
-            this.sqlSession.update("updateAccount", account);
+            this.sqlSession.update("AccountDAO.update", account);
         } else {
             account.setId(this.getNextId());
-            this.sqlSession.insert("insertAccount", account);
+            this.sqlSession.insert("AccountDAO.insert", account);
         }
-        return this.sqlSession.selectOne("findAccountById", account.getId());
+        return this.sqlSession.selectOne("AccountDAO.findById", account.getId());
     }
 
     public void deleteAll(List<AccountDto> accountList) {
@@ -48,7 +48,7 @@ public class AccountDao {
     }
 
     public void delete(AccountDto account) {
-        this.sqlSession.delete("deleteAccount", account);
+        this.sqlSession.delete("AccountDAO.delete", account);
     }
 
 }

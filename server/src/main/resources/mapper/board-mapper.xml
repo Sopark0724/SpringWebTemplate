@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.web.template.board.domain.dao">
+<mapper namespace="BoardDAO">
 
-    <select id="findBoardAll" resultType="hashmap">
+    <select id="findAll" resultType="hashmap">
         select * from board
     </select>
 
-    <select id="findBoardById" resultType="BoardDto">
+    <select id="findById" resultType="com.web.template.board.domain.dto.BoardDto">
         select * from board where id = #{id}
     </select>
 
-    <select id="findBoardFirstOrderByIdDesc" resultType="BoardDto">
+    <select id="findFirstOrderByIdDesc" resultType="com.web.template.board.domain.dto.BoardDto">
         select * from board order by id desc limit 0, 1
     </select>
 
-    <select id="findBoardNextId" resultType="Long">
+    <select id="findNextId" resultType="Long">
         select (max(id) +1) from board
     </select>
 
-    <select id="findBoardCountAll" resultType="Integer">
+    <select id="findCountAll" resultType="Integer">
         select count(*) from board
     </select>
 
-    <select id="findBoardPage" parameterType="com.web.template.common.application.data.PageListCommand" resultType="BoardDto">
+    <select id="findPage" parameterType="com.web.template.common.application.data.PageListCommand" resultType="com.web.template.board.domain.dto.BoardDto">
         select * from board
         <if test="sort">
            order by ${properties} ${direction}
@@ -32,18 +32,18 @@
     </select>
 
 
-    <update id="updateBoard" parameterType="BoardDto">
+    <update id="update" parameterType="com.web.template.board.domain.dto.BoardDto">
         update board set contents = #{contents} , title =#{title} , user_id = #{user_id} , updated_at = now()
         where id = #{id}
     </update>
 
-    <insert id="insertBoard" parameterType="BoardDto">
+    <insert id="insert" parameterType="com.web.template.board.domain.dto.BoardDto">
         insert into board
         (id, contents, title, user_id, created_at, updated_at)
         values (#{id}, #{contents}, #{title}, #{user_id}, now(), now())
     </insert>
 
-    <delete id="deleteBoard" parameterType="BoardDto">
+    <delete id="delete" parameterType="com.web.template.board.domain.dto.BoardDto">
         delete from board
         where id = #{id}
     </delete>
