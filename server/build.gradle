@@ -28,7 +28,7 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-data-jpa')
    compile('org.springframework.boot:spring-boot-starter-security')
     compile('org.springframework.boot:spring-boot-starter-web')
-    compile('org.dao.spring.boot:dao-spring-boot-starter:1.3.2')
+    compile("org.mybatis.spring.boot:mybatis-spring-boot-starter:1.3.2")
     compile group: 'org.modelmapper', name: 'modelmapper', version: '2.2.0'
     compile group: 'com.jcraft', name: 'jsch', version: '0.1.54'
     runtime('mysql:mysql-connector-java')
