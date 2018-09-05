@@ -11,4 +11,9 @@ public class PageListCommand {
     private String properties;
 
     private String direction;
+
+    public int getCurrentPoint(){
+        return this.page * offset;
+    }
+
 }
