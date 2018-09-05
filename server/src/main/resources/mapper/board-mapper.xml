@@ -19,6 +19,19 @@
         select (max(id) +1) from board
     </select>
 
+    <select id="findBoardCountAll" resultType="Integer">
+        select count(*) from board
+    </select>
+
+    <select id="findBoardPage" parameterType="com.web.template.common.application.data.PageListCommand" resultType="BoardDto">
+        select * from board
+        <if test="properties != null and direction != null and properties.length > 0 and direction.length > 0 ">
+           order by #{properties} #{direction}
+        </if>
+        limit #{currentPoint} , #{offset}
+    </select>
+
+
     <update id="updateBoard" parameterType="BoardDto">
         update board set contents = #{contents} , title =#{title} , user_id = #{user_id} , updated_at = now()
         where id = #{id}

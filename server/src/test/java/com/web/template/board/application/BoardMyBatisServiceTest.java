@@ -4,6 +4,7 @@ import com.web.template.board.application.data.BoardAddCommand;
 import com.web.template.board.application.data.BoardPresentation;
 import com.web.template.common.AbstractServiceHelper;
 import com.web.template.common.application.data.PageListCommand;
+import com.web.template.common.model.PageList;
 import com.web.template.user.application.AccountService;
 import com.web.template.user.application.data.AccountAddCommand;
 import com.web.template.user.application.data.AccountPresentation;
@@ -78,4 +79,23 @@ public class BoardMyBatisServiceTest extends AbstractServiceHelper {
 
     }
 
+
+    @Test
+    public void getList() {
+        // Given
+        AccountPresentation account = accountService.create(new AccountAddCommand("test", "test", "test", "USER"));
+        boardService.create(new BoardAddCommand("test title", "test content"), account.getId());
+        boardService.create(new BoardAddCommand("test title", "test content"), account.getId());
+        boardService.create(new BoardAddCommand("test title", "test content"), account.getId());
+
+        PageListCommand pageListCommand = new PageListCommand(0, 10, "", "");
+
+        // When
+        PageList<BoardPresentation> pageList = boardService.getPageList(pageListCommand);
+
+        // Then
+        Assert.assertEquals("리스트의 총개수는 3개", 3, pageList.getTotalElements());
+        Assert.assertEquals("리스트의 페이지는 1번", 1, pageList.getTotalPages());
+
+    }
 }
