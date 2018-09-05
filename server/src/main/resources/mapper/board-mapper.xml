@@ -7,6 +7,10 @@
         select * from board
     </select>
 
+    <select id="findBoardAll" parameterType="PageRequest" resultType="int">
+        select * from board
+    </select>
+
     <select id="findBoardById" resultType="BoardDto">
         select * from board where id = #{id}
     </select>

@@ -1,12 +1,19 @@
 package com.web.template.board.domain.dao;
 
 import com.web.template.board.domain.dto.BoardDto;
+import com.web.template.common.application.data.PageListCommand;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Repository
@@ -21,8 +28,12 @@ public class BoardDao {
         return nextId != null ? nextId : 1L;
     }
 
-    public List<BoardDto> findAll() {
-        return this.sqlSession.selectList("findBoardAll");
+    public Page<BoardDto> findAll(PageListCommand pageListCommand) {
+        Map<String, String> params = new HashMap<>();
+        List<BoardDto> list = this.sqlSession.selectList("findBoardAll", null, new RowBounds(pageListCommand.getOffset(), pageListCommand.getPage()));
+        int totalCount = this.sqlSession.selectOne("countBoardAll", null);
+
+        return new PageImpl<>(list, PageRequest.of(pageListCommand.getPage(), totalCount), totalCount);
     }
 
     public BoardDto findById(Long id) {

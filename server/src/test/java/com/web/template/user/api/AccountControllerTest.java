@@ -35,8 +35,7 @@ public class AccountControllerTest {
         ResultActions resultAction =
                 mockMvcHelper.perform(
                         post("/account/create")
-                                .content(requestPayload)
-                );
+                                .content(requestPayload));
 
         // Then
         resultAction
@@ -54,9 +53,7 @@ public class AccountControllerTest {
         ResultActions resultAction =
                 mockMvcHelper.perform(
                         post("/account/login")
-                                .content(requestPayload)
-
-                );
+                                .content(requestPayload));
 
         // Then
         resultAction

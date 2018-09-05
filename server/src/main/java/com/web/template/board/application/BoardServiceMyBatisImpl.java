@@ -10,10 +10,14 @@ import com.web.template.user.domain.dto.AccountDto;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 
 import java.security.InvalidParameterException;
+import java.util.List;
 import java.util.NoSuchElementException;
+
+import static java.util.stream.Collectors.toList;
 
 @Service("boardServiceMyBatisImpl")
 @RequiredArgsConstructor
@@ -89,6 +93,16 @@ public class BoardServiceMyBatisImpl implements BoardService {
 
     @Override
     public Page<BoardPresentation> getList(PageListCommand pageListCommand) {
-        return null;
+        Page<BoardDto> list = this.boardDao.findAll(pageListCommand);
+
+        List<BoardPresentation> result
+                = list.stream()
+                .map((boardDto)-> {
+                    AccountDto account = this.getAccount(boardDto.getUser_id());
+                    return BoardPresentation.convertFromDto(boardDto, account);
+                })
+                .collect(toList());
+
+        return new PageImpl<>(result, list.getPageable(), list.getTotalElements());
     }
 }
