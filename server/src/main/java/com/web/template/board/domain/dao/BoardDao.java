@@ -57,7 +57,9 @@ public class BoardDao {
     }
 
     public void deleteAll(List<BoardDto> boardList) {
-        boardList.forEach(this::delete);
+        for (BoardDto boardDto : boardList) {
+            this.delete(boardDto);
+        }
     }
 
     public void delete(BoardDto board) {
