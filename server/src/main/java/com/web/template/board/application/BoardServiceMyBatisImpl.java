@@ -4,7 +4,8 @@ import com.web.template.board.application.data.BoardAddCommand;
 import com.web.template.board.application.data.BoardPresentation;
 import com.web.template.board.domain.dao.BoardDao;
 import com.web.template.board.domain.dto.BoardDto;
-import com.web.template.common.application.data.PageListCommand;
+import com.web.template.common.application.data.PageCommand;
+import com.web.template.common.application.data.PagePresentation;
 import com.web.template.user.domain.dao.AccountDao;
 import com.web.template.user.domain.dto.AccountDto;
 import lombok.NonNull;
@@ -91,7 +92,7 @@ public class BoardServiceMyBatisImpl implements BoardService {
     }
 
     @Override
-    public Page<BoardPresentation> getList(PageListCommand pageListCommand) {
+    public PagePresentation<BoardPresentation> getList(PageCommand pageListCommand) {
         Page<BoardDto> list = this.boardDao.findAll(pageListCommand);
 
         List<BoardPresentation> result = new ArrayList<>();
@@ -100,6 +101,6 @@ public class BoardServiceMyBatisImpl implements BoardService {
             result.add(BoardPresentation.convertFromDto(boardDto, this.getAccount(boardDto.getUser_id())));
         }
 
-        return new PageImpl<>(result, list.getPageable(), list.getTotalElements());
+        return new PagePresentation<>(true, list.getTotalElements(), result);
     }
 }

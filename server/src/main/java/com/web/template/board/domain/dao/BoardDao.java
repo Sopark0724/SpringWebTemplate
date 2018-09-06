@@ -1,7 +1,7 @@
 package com.web.template.board.domain.dao;
 
 import com.web.template.board.domain.dto.BoardDto;
-import com.web.template.common.application.data.PageListCommand;
+import com.web.template.common.application.data.PageCommand;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.session.SqlSession;
@@ -25,11 +25,11 @@ public class BoardDao {
         return nextId != null ? nextId : 1L;
     }
 
-    public Page<BoardDto> findAll(PageListCommand pageListCommand) {
+    public Page<BoardDto> findAll(PageCommand pageListCommand) {
         List<BoardDto> list = this.sqlSession.selectList("findBoardAll", null, pageListCommand.rowBounds());
         int totalCount = this.sqlSession.selectOne("findCountAll", null);
 
-        return new PageImpl<>(list, PageRequest.of(pageListCommand.getPage(), pageListCommand.getOffset()), totalCount);
+        return new PageImpl<>(list, PageRequest.of(pageListCommand.getPage(), pageListCommand.getLimit()), totalCount);
     }
 
     public BoardDto findById(Long id) {

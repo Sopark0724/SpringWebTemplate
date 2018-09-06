@@ -3,7 +3,8 @@ package com.web.template.board.application;
 import com.web.template.board.application.data.BoardAddCommand;
 import com.web.template.board.application.data.BoardPresentation;
 import com.web.template.common.AbstractServiceHelper;
-import com.web.template.common.application.data.PageListCommand;
+import com.web.template.common.application.data.PageCommand;
+import com.web.template.common.application.data.PagePresentation;
 import com.web.template.user.application.AccountService;
 import com.web.template.user.application.data.AccountAddCommand;
 import com.web.template.user.application.data.AccountPresentation;
@@ -90,14 +91,13 @@ public class BoardServiceTest extends AbstractServiceHelper {
         boardService.create(new BoardAddCommand("test title", "test content"), account.getId());
         boardService.create(new BoardAddCommand("test title", "test content"), account.getId());
 
-        PageListCommand pageListCommand = new PageListCommand(0, 10, "", "");
+        PageCommand pageListCommand = new PageCommand(0, 10, "", "");
 
         // When
-        Page<BoardPresentation> pageList = boardService.getList(pageListCommand);
+        PagePresentation<BoardPresentation> pageList = boardService.getList(pageListCommand);
 
         // Then
-        Assert.assertEquals("리스트의 총개수는 3개", 3, pageList.getTotalElements());
-        Assert.assertEquals("리스트의 페이지는 1번", 1, pageList.getTotalPages());
+        Assert.assertEquals("리스트의 총개수는 3개", 3, pageList.getResults());
 
     }
 
