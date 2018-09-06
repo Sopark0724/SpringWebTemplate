@@ -27,7 +27,7 @@ public class BoardDao {
     }
 
     public Page<BoardDto> findAll(PageListCommand pageListCommand) {
-        List<BoardDto> list = this.sqlSession.selectList("findBoardAll", null, new RowBounds(pageListCommand.getPage() * pageListCommand.getOffset(), pageListCommand.getOffset()));
+        List<BoardDto> list = this.sqlSession.selectList("findBoardAll", null, pageListCommand.rowBounds());
         int totalCount = this.sqlSession.selectOne("findCountAll", null);
 
         return new PageImpl<>(list, PageRequest.of(pageListCommand.getPage(), pageListCommand.getOffset()), totalCount);

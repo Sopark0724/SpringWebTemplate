@@ -14,10 +14,9 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 
 import java.security.InvalidParameterException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
-
-import static java.util.stream.Collectors.toList;
 
 @Service("boardServiceMyBatisImpl")
 @RequiredArgsConstructor
@@ -95,12 +94,11 @@ public class BoardServiceMyBatisImpl implements BoardService {
     public Page<BoardPresentation> getList(PageListCommand pageListCommand) {
         Page<BoardDto> list = this.boardDao.findAll(pageListCommand);
 
-        List<BoardPresentation> result = list.getContent().stream()
-                    .map((boardDto)-> {
-                        AccountDto account = this.getAccount(boardDto.getUser_id());
-                        return BoardPresentation.convertFromDto(boardDto, account);
-                    })
-                    .collect(toList());
+        List<BoardPresentation> result = new ArrayList<>();
+
+        for (BoardDto boardDto : list.getContent()) {
+            result.add(BoardPresentation.convertFromDto(boardDto, this.getAccount(boardDto.getUser_id())));
+        }
 
         return new PageImpl<>(result, list.getPageable(), list.getTotalElements());
     }
