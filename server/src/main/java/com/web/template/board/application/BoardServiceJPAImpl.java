@@ -4,7 +4,8 @@ import com.web.template.board.application.data.BoardAddCommand;
 import com.web.template.board.application.data.BoardPresentation;
 import com.web.template.board.domain.Board;
 import com.web.template.board.domain.BoardRepository;
-import com.web.template.common.application.data.PageListCommand;
+import com.web.template.common.application.data.PageCommand;
+import com.web.template.common.application.data.PagePresentation;
 import com.web.template.common.model.PageList;
 import com.web.template.common.util.PageRequestUtil;
 import com.web.template.user.domain.Account;
@@ -76,7 +77,7 @@ public class BoardServiceJPAImpl implements BoardService {
     }
 
     @Override
-    public Page<BoardPresentation> getList(PageListCommand command) {
+    public PagePresentation<BoardPresentation> getList(PageCommand command) {
         Page<Board> list = boardRepository.findAll(PageRequestUtil.create(command));
         List<BoardPresentation> boardPresentations;
 
@@ -84,6 +85,6 @@ public class BoardServiceJPAImpl implements BoardService {
                 .map(BoardPresentation::convertFromEntity)
                 .collect(Collectors.toList());
 
-        return new PageImpl<>(boardPresentations, list.getPageable(), list.getTotalElements());
+        return new PagePresentation<>(true, list.getTotalElements(), boardPresentations);
     }
 }

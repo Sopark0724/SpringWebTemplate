@@ -27,7 +27,7 @@
         select count(*) from board
     </select>
 
-    <select id="findPage" parameterType="com.web.template.common.application.data.PageListCommand" resultType="com.web.template.board.domain.dto.BoardDto">
+    <select id="findPage" parameterType="com.web.template.common.application.data.PageCommand" resultType="com.web.template.board.domain.dto.BoardDto">
         select * from board
         <if test="sort">
            order by ${properties} ${direction}
