@@ -4,15 +4,14 @@ import com.web.template.board.domain.dto.BoardDto;
 import com.web.template.common.application.data.PageListCommand;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -38,7 +37,13 @@ public class BoardDao {
     }
 
     public List<BoardDto> saveAll(List<BoardDto> boardList) {
-        return boardList.stream().map(this::save).collect(Collectors.toList());
+        List<BoardDto> saveResult = new ArrayList<>();
+
+        for (BoardDto boardDto : boardList) {
+            saveResult.add(this.save(boardDto));
+        }
+        return saveResult;
+        //return boardList.stream().map(this::save).collect(Collectors.toList());
     }
 
     public BoardDto save(BoardDto board) {
