@@ -32,7 +32,6 @@
         <if test="sort">
            order by ${properties} ${direction}
         </if>
-        limit ${currentPoint} , ${offset}
     </select>
 
 
