@@ -3,8 +3,8 @@ package com.web.template.board.api;
 import com.web.template.board.application.BoardService;
 import com.web.template.board.application.data.BoardAddCommand;
 import com.web.template.board.application.data.BoardPresentation;
-import com.web.template.common.application.data.PageListCommand;
-import com.web.template.common.model.PageList;
+import com.web.template.common.application.data.PageCommand;
+import com.web.template.common.application.data.PagePresentation;
 import com.web.template.security.SpringSecurityContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -40,11 +40,11 @@ public class BoardMyBatisController {
     }
 
     @GetMapping("/boards")
-    public Page<BoardPresentation> getList(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int offset,
+    public PagePresentation<BoardPresentation> getList(
+            @RequestParam(defaultValue = "0") int start,
+            @RequestParam(defaultValue = "10") int limit,
             @RequestParam(required = false) String properties,
             @RequestParam(required = false) String direction) {
-        return boardService.getList(new PageListCommand(page, offset, properties, direction));
+        return boardService.getList(new PageCommand(start, limit, properties, direction));
     }
 }

@@ -2,9 +2,8 @@ package com.web.template.board.application;
 
 import com.web.template.board.application.data.BoardAddCommand;
 import com.web.template.board.application.data.BoardPresentation;
-import com.web.template.common.application.data.PageListCommand;
-import com.web.template.common.model.PageList;
-import org.springframework.data.domain.Page;
+import com.web.template.common.application.data.PageCommand;
+import com.web.template.common.application.data.PagePresentation;
 import org.springframework.transaction.annotation.Transactional;
 
 public interface BoardService {
@@ -18,5 +17,5 @@ public interface BoardService {
     @Transactional
     BoardPresentation get(Long boardId);
 
-    Page<BoardPresentation> getList(PageListCommand pageListCommand);
+    PagePresentation<BoardPresentation> getList(PageCommand pageListCommand);
 }

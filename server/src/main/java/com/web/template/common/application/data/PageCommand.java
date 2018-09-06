@@ -5,17 +5,17 @@ import org.apache.ibatis.session.RowBounds;
 import org.springframework.util.StringUtils;
 
 @Value
-public class PageListCommand {
-    private int page;
+public class PageCommand {
+    private int start;
 
-    private int offset;
+    private int limit;
 
     private String properties;
 
     private String direction;
 
     public int getCurrentPoint(){
-        return this.page * offset;
+        return this.start * limit;
     }
 
     public boolean isSort(){
@@ -23,6 +23,10 @@ public class PageListCommand {
     }
 
     public RowBounds rowBounds(){
-        return new RowBounds(this.getPage() * this.getOffset(), this.getOffset());
+        return new RowBounds(this.start , this.limit);
+    }
+
+    public int getPage(){
+        return start / limit;
     }
 }
