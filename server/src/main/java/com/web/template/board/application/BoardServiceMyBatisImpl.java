@@ -11,7 +11,6 @@ import com.web.template.user.domain.dto.AccountDto;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 
 import java.security.InvalidParameterException;
@@ -70,7 +69,7 @@ public class BoardServiceMyBatisImpl implements BoardService {
 
         board = this.boardDao.save(board);
 
-        return new BoardPresentation(board.getId(), account.getName(), board.getTitle(), board.getContents(), board.getCreated_at(), board.getUpdated_at());
+        return new BoardPresentation(board.getId(), account.getName(), board.getTitle(), board.getContents(), board.getCreated_at(), board.getUpdated_at(), null);
     }
 
     @Override
@@ -88,7 +87,7 @@ public class BoardServiceMyBatisImpl implements BoardService {
     public BoardPresentation get(Long boardId) {
         BoardDto board = this.getBoard(boardId);
         AccountDto account = this.getAccount(board.getUser_id());
-        return new BoardPresentation(board.getId(), account.getName(), board.getTitle(), board.getContents(), board.getCreated_at(), board.getUpdated_at());
+        return new BoardPresentation(board.getId(), account.getName(), board.getTitle(), board.getContents(), board.getCreated_at(), board.getUpdated_at(), null);
     }
 
     @Override

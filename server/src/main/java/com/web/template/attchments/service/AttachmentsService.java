@@ -2,6 +2,7 @@ package com.web.template.attchments.service;
 
 import com.web.template.attchments.data.AttachmentsPresentation;
 import com.web.template.attchments.domain.Attachments;
+import com.web.template.attchments.mapper.component.AttachMapManager;
 import com.web.template.attchments.repository.AttachmentsRepository;
 import com.web.template.attchments.type.AttachmentsType;
 import lombok.NonNull;
@@ -28,6 +29,9 @@ public class AttachmentsService {
     private final @NonNull
     AttachmentsRepository attachmentsRepository;
 
+    private final @NonNull
+    AttachMapManager attachMapManager;
+
     public List<AttachmentsPresentation> uploadFiles(AttachmentsType attachmentsType, Long id, MultipartHttpServletRequest mReq) {
         List<MultipartFile> mfiles = new ArrayList<>();
         mReq.getMultiFileMap().entrySet().forEach(e -> mfiles.addAll(e.getValue()));
@@ -43,6 +47,9 @@ public class AttachmentsService {
         }).filter(Objects::nonNull).collect(Collectors.toList());
 
         attachmentsList = this.attachmentsRepository.saveAll(attachmentsList);
+
+        attachmentsList.forEach(attachments -> this.attachMapManager.map(attachmentsType, attachments, id));
+
         return attachmentsList.stream().map(AttachmentsPresentation::convertFrom).collect(Collectors.toList());
     }
 

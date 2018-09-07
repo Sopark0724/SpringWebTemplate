@@ -22,5 +22,12 @@ public class AttachmentsBoardMap {
     private Board board;
 
     @ManyToOne
-    private Attachments attachment;
+    private Attachments attachments;
+
+    public static AttachmentsBoardMap mapping(Board board, Attachments attachments) {
+        AttachmentsBoardMap boardMap = new AttachmentsBoardMap();
+        boardMap.board = board;
+        boardMap.attachments = attachments;
+        return boardMap;
+    }
 }
