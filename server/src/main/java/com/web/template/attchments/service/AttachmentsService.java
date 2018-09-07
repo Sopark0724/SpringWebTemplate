@@ -3,6 +3,7 @@ package com.web.template.attchments.service;
 import com.web.template.attchments.data.AttachmentsPresentation;
 import com.web.template.attchments.domain.Attachments;
 import com.web.template.attchments.repository.AttachmentsRepository;
+import com.web.template.attchments.type.AttachmentsType;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +28,7 @@ public class AttachmentsService {
     private final @NonNull
     AttachmentsRepository attachmentsRepository;
 
-    public List<AttachmentsPresentation> uploadFiles(MultipartHttpServletRequest mReq) {
+    public List<AttachmentsPresentation> uploadFiles(AttachmentsType attachmentsType, Long id, MultipartHttpServletRequest mReq) {
         List<MultipartFile> mfiles = new ArrayList<>();
         mReq.getMultiFileMap().entrySet().forEach(e -> mfiles.addAll(e.getValue()));
         assert mfiles.size() > 0;

@@ -1,10 +1,10 @@
 package com.web.template.board.application.data;
 
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
-@AllArgsConstructor
+@Builder
 public class BoardAddCommand {
     private String title;
 

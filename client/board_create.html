@@ -1,0 +1,92 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Board Create</title>
+</head>
+
+<body>
+<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+
+    <form id="boardCreate" name="boardCreate" method="post" enctype="multipart/form-data">
+
+        <table class="board_view">
+            <colgroup>
+                <col width="15%">
+                <col width="*"/>
+            </colgroup>
+            <tbody>
+                <tr>
+                    <th scope="row">제목</th>
+                    <td><input type="text" id="title" name="title" class="wdp_90"></td>
+                </tr>
+
+                <tr>
+                    <th scope="row">첨부 파일</th>
+                    <td><input type="file" id="attachments" name="attachments" class="wdp_90" multiple></td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="view_text">
+                        <textarea rows="20" cols="100" id="contents" name="contents"></textarea>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+<button class="btn btn_check" onclick="writeBoard()">확인</button>
+
+    <script type="text/javascript">
+
+writeBoard = function(){
+    var body = JSON.stringify({title : $('input#title').val(), contents: $('textarea#contents').val()})
+
+    $.ajax({
+        url: 'http://localhost:8080/v1/public/board',
+        data: body,
+        dataType: 'json',
+        contentType: "application/json; charset=UTF-8",
+        type: 'POST',
+        success: function (data) {
+            uploadfile(data.id);
+            console.log("fileupload success");
+        } ,
+        error:function(data){
+            alert("board create fail")
+        }
+    });
+
+}
+
+
+uploadfile = function(boardId) {
+    console.log("uploadfile board Id : " + boardId)
+     var file = document.getElementById('attachments');
+     var files =  file.files;
+     if(!files || files.length < 1){ return; }
+     var filedata = new FormData();
+     for(let i =0 ;i < files.length ; i ++){
+         filedata.append('uploadfile_' + i , files[i]);
+     }
+
+     $.ajax({
+         url: 'http://localhost:8080/attachments/upload/BOARD/' + boardId,
+         data: filedata,
+         enctype: 'multipart/form-data',
+         dataType: 'json',
+         processData: false,
+         contentType:false,
+         type: 'POST',
+         success: function (data) {
+             console.log(files);
+             console.log("fileupload success");
+         } ,
+         error:function(data){
+             alert("file upload fail")
+         }
+     });
+}
+  
+    </script>
+
+</body>
+</html>
