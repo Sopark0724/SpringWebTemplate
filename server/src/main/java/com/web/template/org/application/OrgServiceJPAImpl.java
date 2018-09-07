@@ -19,8 +19,8 @@ import java.util.NoSuchElementException;
 
 import static java.util.stream.Collectors.*;
 
-@Service
-public class OrgServiceJPAImpl {
+@Service(value = "orgSercviceJPAImpl")
+public class OrgServiceJPAImpl implements OrgService {
 
     @Autowired
     private DepartmentRepository deptRepository;
@@ -28,6 +28,7 @@ public class OrgServiceJPAImpl {
     @Autowired
     private AccountRepository accountRepository;
 
+    @Override
     public DepartmentPresentation create(DepartmentAddCommand addCommand){
         Department parent = null;
         if(addCommand.getParentId() != null){
@@ -38,6 +39,7 @@ public class OrgServiceJPAImpl {
         return new DepartmentPresentation(result.getId(), result.getName(), result.getParentId());
     }
 
+    @Override
     @Transactional
     public OrgPresentation getTree(){
         Department root = deptRepository.findByParent(null);
@@ -76,6 +78,7 @@ public class OrgServiceJPAImpl {
         return new OrgPresentation(deptMember.getName(), null, null, true);
     }
 
+    @Override
     public void addMember(DeptMemberAddCommand addCommand) {
         Department department = deptRepository.findById(addCommand.getDeptId()).orElseThrow(() -> new NoSuchElementException());
         Account user = accountRepository.findById(addCommand.getUserId()).orElseThrow(() -> new NoSuchElementException());
