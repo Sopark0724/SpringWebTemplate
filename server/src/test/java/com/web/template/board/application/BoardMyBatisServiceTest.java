@@ -38,7 +38,7 @@ public class BoardMyBatisServiceTest extends AbstractServiceHelper {
         AccountDto account = accountDao.save(new AccountDto("test", "test", "test", "USER"));
         String title = "title test";
         String content = "cotent test";
-        BoardAddCommand boardAddCommand = new BoardAddCommand(title, content);
+        BoardAddCommand boardAddCommand =BoardAddCommand.builder().title(title).contents(content).build();
 
         // When
         BoardPresentation board = boardService.create(boardAddCommand, account.getId());
@@ -56,11 +56,11 @@ public class BoardMyBatisServiceTest extends AbstractServiceHelper {
         AccountDto account = accountDao.save(new AccountDto("test", "test", "test", "USER"));
         String originTitle = "board test";
         String originContent = "content test";
-        BoardPresentation board = boardService.create(new BoardAddCommand(originTitle, originContent), account.getId());
+        BoardPresentation board = boardService.create(BoardAddCommand.builder().title(originTitle).contents(originContent).build(), account.getId());
 
         // When
         String updateContentText = "update content test";
-        BoardAddCommand boardAddCommand = new BoardAddCommand(originTitle, updateContentText);
+        BoardAddCommand boardAddCommand = BoardAddCommand.builder().title(originTitle).contents(originContent).build();
         BoardPresentation result = boardService.update(board.getId(), boardAddCommand, account.getId());
 
         // Then
@@ -71,7 +71,7 @@ public class BoardMyBatisServiceTest extends AbstractServiceHelper {
     public void delete() {
         // Given
         AccountDto account = accountDao.save(new AccountDto("test", "test", "test", "USER"));
-        BoardPresentation board = boardService.create(new BoardAddCommand("test title", "test content"), account.getId());
+        BoardPresentation board = boardService.create(BoardAddCommand.builder().title("test title").contents("test content").build(), account.getId());
 
         // When
         boardService.delete(board.getId(), account.getId());
@@ -86,9 +86,9 @@ public class BoardMyBatisServiceTest extends AbstractServiceHelper {
     public void getList() {
         // Given
         AccountDto account = accountDao.save(new AccountDto("test", "test", "test", "USER"));
-        boardService.create(new BoardAddCommand("test title", "test content"), account.getId());
-        boardService.create(new BoardAddCommand("test title", "test content"), account.getId());
-        boardService.create(new BoardAddCommand("test title", "test content"), account.getId());
+        boardService.create(BoardAddCommand.builder().title("test title").contents("test content").build(), account.getId());
+        boardService.create(BoardAddCommand.builder().title("test title").contents("test content").build(), account.getId());
+        boardService.create(BoardAddCommand.builder().title("test title").contents("test content").build(), account.getId());
 
         PageCommand pageListCommand = new PageCommand(0, 2, "", "");
 

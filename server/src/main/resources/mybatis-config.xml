@@ -8,6 +8,8 @@
         <mapper resource="mapper/account-mapper.xml"/>
         <mapper resource="mapper/department-mapper.xml"/>
         <mapper resource="mapper/deptmember-mapper.xml"/>
+        <mapper resource="mapper/attachments-mapper.xml"/>
+        <mapper resource="mapper/attachments-board-map-mapper.xml"/>
     </mappers>
 </configuration>
 

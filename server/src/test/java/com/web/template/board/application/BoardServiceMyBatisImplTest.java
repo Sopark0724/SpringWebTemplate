@@ -26,7 +26,7 @@ public class BoardServiceMyBatisImplTest extends AbstractServiceHelper {
         AccountPresentation accountPresentation = accountService.create(new AccountAddCommand("홍길동", "test1", "1234", "USER"));
         String title = "test title";
         String contents = "test contents";
-        BoardAddCommand boardAddCommand = new BoardAddCommand(title, contents);
+        BoardAddCommand boardAddCommand = BoardAddCommand.builder().title(title).contents(contents).build();
 
         // When
         BoardPresentation boardPresentation = boardServiceMyBatis.create(boardAddCommand, accountPresentation.getId());

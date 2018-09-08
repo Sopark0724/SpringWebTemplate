@@ -34,7 +34,7 @@ public class BoardJPAController {
     }
 
     @PutMapping("/board/{boardId}")
-    public BoardPresentation update(@PathVariable Long boardId, BoardAddCommand boardAddCommand) {
+    public BoardPresentation update(@PathVariable Long boardId, @RequestBody  BoardAddCommand boardAddCommand) {
         return boardService.update(boardId, boardAddCommand, context.getAccount().getId());
     }
 
