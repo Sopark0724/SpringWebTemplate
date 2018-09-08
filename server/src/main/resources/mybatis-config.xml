@@ -6,6 +6,8 @@
     <mappers>
         <mapper resource="mapper/board-mapper.xml"/>
         <mapper resource="mapper/account-mapper.xml"/>
+        <mapper resource="mapper/department-mapper.xml"/>
+        <mapper resource="mapper/deptmember-mapper.xml"/>
     </mappers>
 </configuration>
 

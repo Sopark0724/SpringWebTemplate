@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="DepartmentDao">
+    <select id="findAll" resultType="com.web.template.org.domain.dto.DepartmentDto">
+        select * from account
+    </select>
+
+    <select id="findById" resultType="com.web.template.org.domain.dto.DepartmentDto">
+        select * from department where id = #{id}
+    </select>
+
+    <select id="findNextId" resultType="Long">
+        select (max(id) +1) from department
+    </select>
+
+    <select id="findByParentIsNull" resultType="com.web.template.org.domain.dto.DepartmentDto">
+        select * from department where parent_id is null
+    </select>
+
+    <select id="findByParent" resultType="com.web.template.org.domain.dto.DepartmentDto">
+        select * from department where parent_id = #{parent_id}
+    </select>
+
+    <update id="update" parameterType="com.web.template.org.domain.dto.DepartmentDto">
+        update department set name = #{name} , parent_id=#{parent_id}
+        where id = #{id}
+    </update>
+
+    <insert id="insert" parameterType="com.web.template.org.domain.dto.DepartmentDto">
+        insert into department
+        (id, name, parent_id)
+        values (#{id}, #{name}, #{parent_id})
+    </insert>
+
+</mapper>

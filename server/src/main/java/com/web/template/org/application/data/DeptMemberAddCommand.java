@@ -5,8 +5,22 @@ import lombok.Value;
 
 @Value
 public class DeptMemberAddCommand {
-    long deptId;
 
-    long userId;
+    private Long id;
 
+    private Long deptId;
+
+    private Long userId;
+
+    public DeptMemberAddCommand(Long id, Long deptId, Long userId) {
+        this.id = id;
+        this.deptId = deptId;
+        this.userId = userId;
+    }
+
+    public DeptMemberAddCommand(Long deptId, Long userId) {
+        this.id = null;
+        this.deptId = deptId;
+        this.userId = userId;
+    }
 }

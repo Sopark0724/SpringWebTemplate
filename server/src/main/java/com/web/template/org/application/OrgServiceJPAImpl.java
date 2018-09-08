@@ -42,7 +42,7 @@ public class OrgServiceJPAImpl implements OrgService {
     @Override
     @Transactional
     public OrgPresentation getTree(){
-        Department root = deptRepository.findByParent(null);
+        Department root = deptRepository.findByParentIsNull();
 
         List<OrgPresentation> orgTree = root.getChildren().stream()
                 .map(this::recursiveDept)
