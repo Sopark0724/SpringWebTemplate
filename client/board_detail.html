@@ -1,0 +1,78 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Board</title>
+</head>
+
+<body>
+<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+
+
+        <table class="board_view">
+            <colgroup>
+                <col width="15%">
+                <col width="*"/>
+            </colgroup>
+            <tbody>
+              <tr>
+                    <th scope="row">게시물 번호</th>
+                  <td><input type="number" id="boardId" name="boardId"  value=1 onchange="initBoard()" class="wdp_90"></td>
+                </tr>
+
+                <tr>
+                    <th scope="row">제목</th>
+                    <td><input type="text" disabled id="title" name="title" class="wdp_90"></td>
+                </tr>
+
+                <tr>
+                    <th scope="row">첨부 파일</th>
+                    <td name="attachments" id="attachments"></td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="view_text">
+                        <textarea rows="20" cols="100" id="contents" name="contents"></textarea>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+<script type="text/javascript">
+
+initBoard= function(){
+    var id = $('input#boardId').val();
+
+    $.ajax({
+        url: 'http://localhost:8080/v1/board/' + id,
+        dataType: 'json',
+        type: 'GET',
+        success: function (data) {
+            initTemplate(data);
+        } ,
+        error:function(err){
+            alert("find board fail " + err)
+            initTemplate({});
+        }
+    });
+}
+
+initBoard();
+
+initTemplate = function(board) {
+    $('td#attachments').empty();
+
+    $('textarea#contents').val(board.content);
+    $('input#title').val(board.title);
+
+    var basedownloadUrl ="http://localhost:8080/attachments/download/"
+
+    if(board.attachments && board.attachments.length > 0 ){
+        board.attachments.forEach(att =>{
+            $('<a href="'+basedownloadUrl + att.fakename+'"> '+att.filename+'</a> ').appendTo('td#attachments')
+        })
+    }
+}
+</script>
+
+</body>
+</html>

@@ -52,4 +52,9 @@ public class BoardJPAController {
             @RequestParam(required = false) String direction){
         return boardService.getList(new PageCommand(start, limit, properties, direction));
     }
+
+    @GetMapping("/board/{id}")
+    public BoardPresentation getBoard(@PathVariable Long id){
+        return boardService.get(id);
+    }
 }
