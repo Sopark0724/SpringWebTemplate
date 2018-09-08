@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="AttachmentsBoardMapDAO">
+    <select id="findAll" resultType="com.web.template.attchments.domain.dto.AttachmentsBoardMapDto">
+        select * from attachments_board_map
+    </select>
+
+    <select id="findById" resultType="com.web.template.attchments.domain.dto.AttachmentsBoardMapDto">
+        select * from attachments_board_map where id = #{id}
+    </select>
+
+    <select id="findNextId" resultType="Long">
+        select (max(id) +1) from attachments_board_map
+    </select>
+
+    <select id="findByBoard" parameterType="com.web.template.board.domain.dto.BoardDto" resultType="com.web.template.attchments.domain.dto.AttachmentsBoardMapDto" >
+        select * from attachments_board_map
+        where board_id = #{id}
+    </select>
+
+    <update id="update" parameterType="com.web.template.attchments.domain.dto.AttachmentsBoardMapDto">
+        update attachments_board_map set board_id=#{board_id}, attachments_id=#{attachments_id}
+        where id = #{id}
+    </update>
+
+    <insert id="insert" parameterType="com.web.template.attchments.domain.dto.AttachmentsBoardMapDto">
+        insert into attachments_board_map
+        (id, board_id, attachments_id)
+        values (#{id},#{board_id}, #{attachments_id} )
+    </insert>
+
+    <delete id="delete" parameterType="com.web.template.attchments.domain.dto.AttachmentsBoardMapDto">
+        delete from attachments_board_map
+        where id = #{id}
+    </delete>
+
+</mapper>

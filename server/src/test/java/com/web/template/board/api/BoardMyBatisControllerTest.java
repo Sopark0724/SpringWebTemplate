@@ -1,8 +1,10 @@
 package com.web.template.board.api;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.web.template.TemplateApplication;
 import com.web.template.board.application.BoardService;
 import com.web.template.board.application.data.BoardAddCommand;
+import com.web.template.board.application.data.BoardPresentation;
 import com.web.template.common.MockMvcHelper;
 import com.web.template.user.domain.dao.AccountDao;
 import com.web.template.user.domain.dto.AccountDto;
@@ -11,12 +13,18 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.util.Assert;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
@@ -30,36 +38,152 @@ public class BoardMyBatisControllerTest {
     private AccountDao accountDao;
 
     @Autowired
+    private ObjectMapper objectMapper;
+
+    @Autowired
     @Qualifier("boardServiceMyBatisImpl")
     private BoardService boardService;
 
     @Test
-    public void create() {
+    public void test_01_create_text_only() throws Exception {
+        AccountDto account = accountDao.save(new AccountDto("test", "test", "test", "USER"));
+
+        BoardAddCommand boardAddCommand = BoardAddCommand.builder().title("test board").contents("test content").build();
+        String body = this.objectMapper.writeValueAsString(boardAddCommand);
+
+
+        ResultActions resultAction =
+                mockMvcHelper.perform(
+                        post("/v2/public/board")
+                                .content(body));
+
+        // Then
+        resultAction
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void test_02_create_attachments() throws Exception {
+        BoardAddCommand boardAddCommand = BoardAddCommand.builder().title("test board").contents("test content").build();
+        String body = this.objectMapper.writeValueAsString(boardAddCommand);
+
+        ResultActions resultAction =
+                mockMvcHelper.perform(
+                        post("/v2/public/board")
+                                .content(body));
+
+        // Then
+        MvcResult mvcResult = resultAction
+                .andDo(print())
+                .andExpect(status().isOk()).andReturn();
+
+        BoardPresentation boardPresentation = this.objectMapper.readValue(mvcResult.getResponse().getContentAsString(), BoardPresentation.class);
+
+        // Then
+        resultAction
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        this.test_03_board_upload_attachments(boardPresentation);
+    }
+
+    private void test_03_board_upload_attachments(BoardPresentation board) throws Exception {
+        MockMultipartFile mockMultipartFile = new MockMultipartFile("file", "testfile.txt", MediaType.TEXT_PLAIN_VALUE, "testFileContent".getBytes());
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart("/v2/attachments/upload/BOARD/" + board.getId()).file(mockMultipartFile);
+
+        // When
+        ResultActions resultAction =
+                mockMvcHelper.perform(builder);
+
+        // Then
+        MvcResult mvcResult = resultAction
+                .andDo(print())
+                .andExpect(status().isOk()).andReturn();
+
+        this.board_attachments_file_check(board);
+    }
+
+    private void board_attachments_file_check(BoardPresentation board) throws Exception {
+        // When
+        ResultActions resultAction =
+                mockMvcHelper.perform(
+                        get("/v2/board/" + board.getId()));
+
+        // Then
+        MvcResult mvcResult = resultAction
+                .andDo(print())
+                .andExpect(status().isOk()).andReturn();
+
+        BoardPresentation boardPresentation = this.objectMapper.readValue(mvcResult.getResponse().getContentAsString(), BoardPresentation.class);
+
+        Assert.notEmpty(boardPresentation.getAttachments(), "Attahcments file is empty");
 
     }
 
     @Test
-    public void update() {
+    @WithMockUser(username = "test", authorities = {"USER"})
+    public void test_04_update() throws Exception {
+
+        // create
+        AccountDto account = accountDao.save(new AccountDto("test", "test", "test", "USER"));
+
+        BoardAddCommand boardAddCommand = BoardAddCommand.builder().title("test board").contents("test content").build();
+        BoardPresentation boardPresentation = boardService.create(boardAddCommand, account.getId());
+        //update
+        boardAddCommand = BoardAddCommand.builder().title("updated").contents("updated").build();
+        String body = this.objectMapper.writeValueAsString(boardAddCommand);
+
+        ResultActions resultAction =
+                mockMvcHelper.perform(
+                        put("/v2/board/" + boardPresentation.getId())
+                                .content(body));
+
+        MvcResult updateResult = resultAction
+                .andDo(print())
+                .andExpect(status().isOk()).andReturn();
+
+        BoardPresentation updated = this.objectMapper.readValue(updateResult.getResponse().getContentAsString(), BoardPresentation.class);
+
+        org.junit.Assert.assertEquals(updated.getTitle(), "updated");
+        org.junit.Assert.assertEquals(updated.getContent(), "updated");
     }
 
     @Test
-    public void delete() {
+    @WithMockUser(username = "test", authorities = {"USER"})
+    public void test_05_delete_test() throws Exception {
+
+        // create
+        AccountDto account = accountDao.save(new AccountDto("test", "test", "test", "USER"));
+
+        BoardAddCommand boardAddCommand = BoardAddCommand.builder().title("test board").contents("test content").build();
+        BoardPresentation boardPresentation = boardService.create(boardAddCommand, account.getId());
+
+        ResultActions resultAction =
+                mockMvcHelper.perform(
+                        delete("/v2/board/" + boardPresentation.getId()));
+
+        // Then
+        resultAction
+                .andDo(print())
+                .andExpect(status().isOk());
+
     }
 
     @Test
     public void getList() throws Exception {
         // Given
         AccountDto account = accountDao.save(new AccountDto("test", "test", "test", "USER"));
-        boardService.create(new BoardAddCommand("test title", "test content"), account.getId());
-        boardService.create(new BoardAddCommand("test title", "test content"), account.getId());
-        boardService.create(new BoardAddCommand("test title", "test content"), account.getId());
+        boardService.create(BoardAddCommand.builder().title("test title").contents("test content").build(), account.getId());
+        boardService.create(BoardAddCommand.builder().title("test title").contents("test content").build(), account.getId());
+        boardService.create(BoardAddCommand.builder().title("test title").contents("test content").build(), account.getId());
 
         // When
         ResultActions resultAction =
                 mockMvcHelper.perform(
                         get("/v2/boards")
-                .param("page", "0")
-                .param("offset", "10"));
+                                .param("page", "0")
+                                .param("offset", "10"));
 
         // Then
         resultAction

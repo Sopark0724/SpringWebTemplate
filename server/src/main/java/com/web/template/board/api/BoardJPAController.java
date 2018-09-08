@@ -34,7 +34,7 @@ public class BoardJPAController {
     }
 
     @PutMapping("/board/{boardId}")
-    public BoardPresentation update(@PathVariable Long boardId, BoardAddCommand boardAddCommand) {
+    public BoardPresentation update(@PathVariable Long boardId, @RequestBody  BoardAddCommand boardAddCommand) {
         return boardService.update(boardId, boardAddCommand, context.getAccount().getId());
     }
 
@@ -51,5 +51,10 @@ public class BoardJPAController {
             @RequestParam(required = false) String properties,
             @RequestParam(required = false) String direction){
         return boardService.getList(new PageCommand(start, limit, properties, direction));
+    }
+
+    @GetMapping("/board/{id}")
+    public BoardPresentation getBoard(@PathVariable Long id){
+        return boardService.get(id);
     }
 }

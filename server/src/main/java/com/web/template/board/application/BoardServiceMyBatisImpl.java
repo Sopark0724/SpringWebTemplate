@@ -69,7 +69,7 @@ public class BoardServiceMyBatisImpl implements BoardService {
 
         board = this.boardDao.save(board);
 
-        return new BoardPresentation(board.getId(), account.getName(), board.getTitle(), board.getContents(), board.getCreated_at(), board.getUpdated_at(), null);
+        return BoardPresentation.convertFromDto(board, account);
     }
 
     @Override
@@ -87,7 +87,7 @@ public class BoardServiceMyBatisImpl implements BoardService {
     public BoardPresentation get(Long boardId) {
         BoardDto board = this.getBoard(boardId);
         AccountDto account = this.getAccount(board.getUser_id());
-        return new BoardPresentation(board.getId(), account.getName(), board.getTitle(), board.getContents(), board.getCreated_at(), board.getUpdated_at(), null);
+        return BoardPresentation.convertFromDto(board, account);
     }
 
     @Override

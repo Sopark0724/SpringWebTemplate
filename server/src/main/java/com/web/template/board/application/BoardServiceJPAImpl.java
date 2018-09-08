@@ -1,5 +1,8 @@
 package com.web.template.board.application;
 
+import com.web.template.attchments.domain.Attachments;
+import com.web.template.attchments.mapper.AttachmentsBoardMap;
+import com.web.template.attchments.repository.AttachmentsBoardMapRepository;
 import com.web.template.board.application.data.BoardAddCommand;
 import com.web.template.board.application.data.BoardPresentation;
 import com.web.template.board.domain.Board;
@@ -28,12 +31,15 @@ public class BoardServiceJPAImpl implements BoardService {
     @Autowired
     private AccountRepository accountRepository;
 
+    @Autowired
+    private AttachmentsBoardMapRepository attachmentsBoardMapRepository;
+
     @Override
     public BoardPresentation create(BoardAddCommand boardAddCommand, Long creatorId) {
         Account account = accountRepository.findById(creatorId).orElseThrow(() -> new NoSuchElementException());
         Board board = boardRepository.save(new Board(account, boardAddCommand.getTitle(), boardAddCommand.getContents()));
 
-        return new BoardPresentation(board.getId(), account.getName(), board.getTitle(), board.getContents(), board.getCreatedAt(), board.getUpdatedAt(), null);
+        return BoardPresentation.convertFromEntity(board);
     }
 
     @Override
@@ -50,8 +56,7 @@ public class BoardServiceJPAImpl implements BoardService {
 
         boardRepository.save(board);
 
-        return new BoardPresentation(board.getId(), account.getName(), board.getTitle(), board.getContents(), board.getCreatedAt(), board.getUpdatedAt(), null);
-
+        return BoardPresentation.convertFromEntity(board);
     }
 
     @Override
@@ -70,8 +75,10 @@ public class BoardServiceJPAImpl implements BoardService {
     @Transactional
     public BoardPresentation get(Long boardId) {
         Board board = boardRepository.findById(boardId).orElseThrow(() -> new NoSuchElementException());
-        return new BoardPresentation(board.getId(), board.getWriterName(), board.getTitle(), board.getContents(), board.getCreatedAt(), board.getUpdatedAt(), null);
+        List<AttachmentsBoardMap> attachmentsBoardMaps = this.attachmentsBoardMapRepository.findByBoard(board);
+        List<Attachments> attachments = attachmentsBoardMaps.stream().map(AttachmentsBoardMap::getAttachments).collect(Collectors.toList());
 
+        return BoardPresentation.convertFromEntity(board, attachments);
     }
 
     @Override
