@@ -22,6 +22,7 @@ public class Department {
     private String name;
 
     @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "department_id")
     private List<DeptMember> members = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)

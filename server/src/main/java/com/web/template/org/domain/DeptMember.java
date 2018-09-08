@@ -16,8 +16,6 @@ public class DeptMember {
     @ManyToOne
     private Account account;
 
-    private int sortOrder;
-
     public DeptMember(Account account) {
         this.account = account;
     }

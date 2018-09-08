@@ -7,5 +7,5 @@ import java.util.List;
 public interface DepartmentRepository extends JpaRepository<Department, Long> {
     Department findByParentIsNull();
 
-    Department findByParent(Object o);
+    List<Department> findByParent(Department parent);
 }
