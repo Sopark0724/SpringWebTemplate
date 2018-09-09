@@ -1,8 +1,10 @@
 package com.web.template.user.application.data;
 
-import lombok.Value;
+import lombok.Builder;
+import lombok.Data;
 
-@Value
+@Data
+@Builder
 public class AccountAddCommand {
 
     private String name;

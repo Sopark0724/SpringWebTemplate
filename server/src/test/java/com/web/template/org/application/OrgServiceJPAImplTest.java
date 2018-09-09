@@ -1,6 +1,7 @@
 package com.web.template.org.application;
 
 import com.web.template.common.AbstractServiceHelper;
+import com.web.template.common.AccountTestService;
 import com.web.template.org.application.data.DepartmentAddCommand;
 import com.web.template.org.application.data.DepartmentPresentation;
 import com.web.template.org.application.data.DeptMemberAddCommand;
@@ -26,7 +27,7 @@ public class OrgServiceJPAImplTest extends AbstractServiceHelper {
     private OrgServiceJPAImpl service;
 
     @Autowired
-    private AccountService accountService;
+    private AccountTestService accountService;
 
     @Test
     public void create() {
@@ -43,24 +44,24 @@ public class OrgServiceJPAImplTest extends AbstractServiceHelper {
     @Test
     public void getTree() {
         // Given
-        AccountPresentation accountPresentation = accountService.create(new AccountAddCommand("user1", "user1", "1234", "USER"));
+        AccountPresentation account = accountService.getTestAccount();
 
         DepartmentPresentation dept = service.create(new DepartmentAddCommand(null, "test"));
-        service.addMember(new DeptMemberAddCommand(dept.getId(), accountPresentation.getId()));
+        service.addMember(new DeptMemberAddCommand(dept.getId(), account.getId()));
 
         DepartmentPresentation dept1 = service.create(new DepartmentAddCommand(dept.getId(), "test1"));
 
         DepartmentPresentation dept2 = service.create(new DepartmentAddCommand(dept.getId(), "test2"));
-        service.addMember(new DeptMemberAddCommand(dept2.getId(), accountPresentation.getId()));
+        service.addMember(new DeptMemberAddCommand(dept2.getId(), account.getId()));
 
         DepartmentPresentation dept1_1 = service.create(new DepartmentAddCommand(dept1.getId(), "test1_1"));
-        service.addMember(new DeptMemberAddCommand(dept1_1.getId(), accountPresentation.getId()));
-        service.addMember(new DeptMemberAddCommand(dept1_1.getId(), accountPresentation.getId()));
+        service.addMember(new DeptMemberAddCommand(dept1_1.getId(), account.getId()));
+        service.addMember(new DeptMemberAddCommand(dept1_1.getId(), account.getId()));
 
         DepartmentPresentation dept1_2 = service.create(new DepartmentAddCommand(dept1.getId(), "test1_2"));
-        service.addMember(new DeptMemberAddCommand(dept1_2.getId(), accountPresentation.getId()));
-        service.addMember(new DeptMemberAddCommand(dept1_2.getId(), accountPresentation.getId()));
-        service.addMember(new DeptMemberAddCommand(dept1_2.getId(), accountPresentation.getId()));
+        service.addMember(new DeptMemberAddCommand(dept1_2.getId(), account.getId()));
+        service.addMember(new DeptMemberAddCommand(dept1_2.getId(), account.getId()));
+        service.addMember(new DeptMemberAddCommand(dept1_2.getId(), account.getId()));
 
         // When
         OrgPresentation tree = service.getTree();

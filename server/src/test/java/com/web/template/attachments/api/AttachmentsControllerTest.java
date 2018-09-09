@@ -8,6 +8,7 @@ import com.web.template.board.application.data.BoardAddCommand;
 import com.web.template.board.application.data.BoardPresentation;
 import com.web.template.board.domain.Board;
 import com.web.template.common.AbstractServiceHelper;
+import com.web.template.common.AccountTestService;
 import com.web.template.common.MockMvcHelper;
 import com.web.template.user.application.AccountService;
 import com.web.template.user.application.data.AccountAddCommand;
@@ -50,14 +51,14 @@ public class AttachmentsControllerTest extends AbstractServiceHelper {
     private BoardService boardJpaService;
 
     @Autowired
-    private AccountService accountService;
+    private AccountTestService accountService;
 
 
     @Test
     public void test_01_uploadfile_Jpa() throws Exception {
         // Given
 
-        AccountPresentation account = accountService.create(new AccountAddCommand("test", "test", "test", "USER"));
+        AccountPresentation account = accountService.getTestAccount();
         BoardPresentation board = this.boardJpaService.create(BoardAddCommand.builder().title("test title").contents("test content").build(), account.getId());
 
         MockMultipartFile mockMultipartFile = new MockMultipartFile("file", "testfile.txt", MediaType.TEXT_PLAIN_VALUE, "testFileContent".getBytes());
@@ -97,7 +98,7 @@ public class AttachmentsControllerTest extends AbstractServiceHelper {
 
     @Test
     public void test_03_uploadfile_Mybatis() throws Exception {
-        AccountPresentation account = accountService.create(new AccountAddCommand("test", "test", "test", "USER"));
+        AccountPresentation account = accountService.getTestAccount();
         BoardPresentation board = this.boardJpaService.create(BoardAddCommand.builder().title("test title").contents("test content").build(), account.getId());
 
         // Given

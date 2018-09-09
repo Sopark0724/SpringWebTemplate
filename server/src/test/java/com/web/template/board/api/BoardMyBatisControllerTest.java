@@ -5,7 +5,9 @@ import com.web.template.TemplateApplication;
 import com.web.template.board.application.BoardService;
 import com.web.template.board.application.data.BoardAddCommand;
 import com.web.template.board.application.data.BoardPresentation;
+import com.web.template.common.AccountTestService;
 import com.web.template.common.MockMvcHelper;
+import com.web.template.user.application.data.AccountPresentation;
 import com.web.template.user.domain.dao.AccountDao;
 import com.web.template.user.domain.dto.AccountDto;
 import org.junit.Test;
@@ -41,12 +43,14 @@ public class BoardMyBatisControllerTest {
     private ObjectMapper objectMapper;
 
     @Autowired
+    private AccountTestService accountTestService;
+
+    @Autowired
     @Qualifier("boardServiceMyBatisImpl")
     private BoardService boardService;
 
     @Test
     public void test_01_create_text_only() throws Exception {
-        AccountDto account = accountDao.save(new AccountDto("test", "test", "test", "USER"));
 
         BoardAddCommand boardAddCommand = BoardAddCommand.builder().title("test board").contents("test content").build();
         String body = this.objectMapper.writeValueAsString(boardAddCommand);
@@ -54,7 +58,7 @@ public class BoardMyBatisControllerTest {
 
         ResultActions resultAction =
                 mockMvcHelper.perform(
-                        post("/v2/public/board")
+                        post("/v2/board").session(this.accountTestService.getTestSession())
                                 .content(body));
 
         // Then
@@ -70,7 +74,7 @@ public class BoardMyBatisControllerTest {
 
         ResultActions resultAction =
                 mockMvcHelper.perform(
-                        post("/v2/public/board")
+                        post("/v2/board").session(this.accountTestService.getTestSession())
                                 .content(body));
 
         // Then
@@ -94,7 +98,7 @@ public class BoardMyBatisControllerTest {
 
         // When
         ResultActions resultAction =
-                mockMvcHelper.perform(builder);
+                mockMvcHelper.perform(builder.session(this.accountTestService.getTestSession()));
 
         // Then
         MvcResult mvcResult = resultAction
@@ -108,7 +112,7 @@ public class BoardMyBatisControllerTest {
         // When
         ResultActions resultAction =
                 mockMvcHelper.perform(
-                        get("/v2/board/" + board.getId()));
+                        get("/v2/board/" + board.getId()).session(this.accountTestService.getTestSession()));
 
         // Then
         MvcResult mvcResult = resultAction
@@ -122,21 +126,20 @@ public class BoardMyBatisControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "test", authorities = {"USER"})
     public void test_04_update() throws Exception {
 
         // create
-        AccountDto account = accountDao.save(new AccountDto("test", "test", "test", "USER"));
+        AccountPresentation accountPresentation = this.accountTestService.getTestAccount();
 
         BoardAddCommand boardAddCommand = BoardAddCommand.builder().title("test board").contents("test content").build();
-        BoardPresentation boardPresentation = boardService.create(boardAddCommand, account.getId());
+        BoardPresentation boardPresentation = boardService.create(boardAddCommand, accountPresentation.getId());
         //update
         boardAddCommand = BoardAddCommand.builder().title("updated").contents("updated").build();
         String body = this.objectMapper.writeValueAsString(boardAddCommand);
 
         ResultActions resultAction =
                 mockMvcHelper.perform(
-                        put("/v2/board/" + boardPresentation.getId())
+                        put("/v2/board/" + boardPresentation.getId()).session(this.accountTestService.getTestSession())
                                 .content(body));
 
         MvcResult updateResult = resultAction
@@ -150,18 +153,14 @@ public class BoardMyBatisControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "test", authorities = {"USER"})
     public void test_05_delete_test() throws Exception {
 
-        // create
-        AccountDto account = accountDao.save(new AccountDto("test", "test", "test", "USER"));
-
         BoardAddCommand boardAddCommand = BoardAddCommand.builder().title("test board").contents("test content").build();
-        BoardPresentation boardPresentation = boardService.create(boardAddCommand, account.getId());
+        BoardPresentation boardPresentation = boardService.create(boardAddCommand, this.accountTestService.getTestAccount().getId());
 
         ResultActions resultAction =
                 mockMvcHelper.perform(
-                        delete("/v2/board/" + boardPresentation.getId()));
+                        delete("/v2/board/" + boardPresentation.getId()).session(this.accountTestService.getTestSession()));
 
         // Then
         resultAction
@@ -173,7 +172,7 @@ public class BoardMyBatisControllerTest {
     @Test
     public void getList() throws Exception {
         // Given
-        AccountDto account = accountDao.save(new AccountDto("test", "test", "test", "USER"));
+        AccountPresentation account = this.accountTestService.getTestAccount();
         boardService.create(BoardAddCommand.builder().title("test title").contents("test content").build(), account.getId());
         boardService.create(BoardAddCommand.builder().title("test title").contents("test content").build(), account.getId());
         boardService.create(BoardAddCommand.builder().title("test title").contents("test content").build(), account.getId());
@@ -181,7 +180,7 @@ public class BoardMyBatisControllerTest {
         // When
         ResultActions resultAction =
                 mockMvcHelper.perform(
-                        get("/v2/boards")
+                        get("/v2/boards").session(this.accountTestService.getTestSession())
                                 .param("page", "0")
                                 .param("offset", "10"));
 

@@ -7,7 +7,8 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
 @Transactional
@@ -19,12 +20,11 @@ public class UserServiceTest extends AbstractServiceHelper {
     @Test
     public void create() {
         // Given
-
-        AccountAddCommand accountAddCommand = new AccountAddCommand("홍길동", "test1", "1234", "USER");
+        AccountAddCommand accountAddCommand = AccountAddCommand.builder().name("홍길동").username("hong").password("1234").role("USER").build();
 
         // When
         AccountPresentation accountPresentation = accountService.create(accountAddCommand);
-        AccountPresentation result =accountService.findById(accountPresentation.getId());
+        AccountPresentation result = accountService.findById(accountPresentation.getId());
 
         // Then
         System.out.println(result.toString());

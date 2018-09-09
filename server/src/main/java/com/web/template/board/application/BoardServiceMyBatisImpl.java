@@ -1,5 +1,10 @@
 package com.web.template.board.application;
 
+import com.web.template.attchments.domain.dao.AttachmentsBoardMapDao;
+import com.web.template.attchments.domain.dao.AttachmentsDao;
+import com.web.template.attchments.domain.dto.AttachmentsBoardMapDto;
+import com.web.template.attchments.domain.dto.AttachmentsDto;
+import com.web.template.attchments.mapper.AttachmentsBoardMap;
 import com.web.template.board.application.data.BoardAddCommand;
 import com.web.template.board.application.data.BoardPresentation;
 import com.web.template.board.domain.dao.BoardDao;
@@ -28,6 +33,11 @@ public class BoardServiceMyBatisImpl implements BoardService {
     private final @NonNull
     AccountDao accountDao;
 
+    private final @NonNull
+    AttachmentsBoardMapDao attachmentsBoardMapDao;
+
+    private final @NonNull
+    AttachmentsDao attachmentsDao;
 
     private AccountDto getAccount(Long id) {
         AccountDto account = this.accountDao.findById(id);
@@ -87,7 +97,14 @@ public class BoardServiceMyBatisImpl implements BoardService {
     public BoardPresentation get(Long boardId) {
         BoardDto board = this.getBoard(boardId);
         AccountDto account = this.getAccount(board.getUser_id());
-        return BoardPresentation.convertFromDto(board, account);
+
+        List<AttachmentsBoardMapDto> attachmentsBoardMaps = this.attachmentsBoardMapDao.findByBoard(board);
+        List<AttachmentsDto> attachmentsDtos = new ArrayList<>();
+        for (AttachmentsBoardMapDto attachmentsBoardMap : attachmentsBoardMaps) {
+            attachmentsDtos.add(this.attachmentsDao.findById(attachmentsBoardMap.getAttachments_id())) ;
+        }
+
+        return BoardPresentation.convertFromDto(board, account, attachmentsDtos);
     }
 
     @Override

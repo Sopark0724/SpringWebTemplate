@@ -8,7 +8,6 @@ import com.web.template.common.application.data.PagePresentation;
 import com.web.template.security.SpringSecurityContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,12 +23,12 @@ public class BoardMyBatisController {
     private SpringSecurityContext context;
 
     @PostMapping("/board")
-    public BoardPresentation create(BoardAddCommand boardAddCommand) {
+    public BoardPresentation create(@RequestBody BoardAddCommand boardAddCommand) {
         return boardService.create(boardAddCommand, context.getAccount().getId());
     }
 
     @PutMapping("/board/{boardId}")
-    public BoardPresentation update(@PathVariable Long boardId, BoardAddCommand boardAddCommand) {
+    public BoardPresentation update(@PathVariable Long boardId, @RequestBody BoardAddCommand boardAddCommand) {
         return boardService.update(boardId, boardAddCommand, context.getAccount().getId());
     }
 
@@ -46,5 +45,10 @@ public class BoardMyBatisController {
             @RequestParam(required = false) String properties,
             @RequestParam(required = false) String direction) {
         return boardService.getList(new PageCommand(start, limit, properties, direction));
+    }
+
+    @GetMapping("/board/{id}")
+    public BoardPresentation getBoard(@PathVariable Long id) {
+        return boardService.get(id);
     }
 }

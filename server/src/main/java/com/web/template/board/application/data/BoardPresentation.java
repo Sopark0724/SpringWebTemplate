@@ -2,6 +2,7 @@ package com.web.template.board.application.data;
 
 import com.web.template.attchments.data.AttachmentsPresentation;
 import com.web.template.attchments.domain.Attachments;
+import com.web.template.attchments.domain.dto.AttachmentsDto;
 import com.web.template.board.domain.Board;
 import com.web.template.board.domain.dto.BoardDto;
 import com.web.template.user.domain.dto.AccountDto;
@@ -36,14 +37,26 @@ public class BoardPresentation {
         return attachments.stream().map(AttachmentsPresentation::convertFrom).collect(Collectors.toList());
     }
 
+    private static List<AttachmentsPresentation> mapAttachmentsDto(List<AttachmentsDto> attachments) {
+        if (attachments == null || attachments.isEmpty()) {
+            return new ArrayList<>();
+        }
+        List<AttachmentsPresentation> list = new ArrayList<>();
+        for (AttachmentsDto attachment : attachments) {
+            list.add(AttachmentsPresentation.convertFrom(attachment));
+        }
+
+        return list;
+    }
+
     public static BoardPresentation convertFromDto(BoardDto board, AccountDto accountDto) {
         return convertFromDto(board, accountDto, null);
     }
 
-    public static BoardPresentation convertFromDto(BoardDto board, AccountDto accountDto, List<Attachments> attachments) {
+    public static BoardPresentation convertFromDto(BoardDto board, AccountDto accountDto, List<AttachmentsDto> attachments) {
         return new BoardPresentation(
                 board.getId(), accountDto.getName(), board.getTitle(),
-                board.getContents(), board.getCreated_at(), board.getUpdated_at(), mapAttachments(attachments));
+                board.getContents(), board.getCreated_at(), board.getUpdated_at(), mapAttachmentsDto(attachments));
     }
 
     public static BoardPresentation convertFromEntity(Board board) {

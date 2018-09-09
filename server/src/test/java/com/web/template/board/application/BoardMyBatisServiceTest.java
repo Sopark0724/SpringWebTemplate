@@ -60,7 +60,7 @@ public class BoardMyBatisServiceTest extends AbstractServiceHelper {
 
         // When
         String updateContentText = "update content test";
-        BoardAddCommand boardAddCommand = BoardAddCommand.builder().title(originTitle).contents(originContent).build();
+        BoardAddCommand boardAddCommand = BoardAddCommand.builder().title(originTitle).contents(updateContentText).build();
         BoardPresentation result = boardService.update(board.getId(), boardAddCommand, account.getId());
 
         // Then
@@ -84,19 +84,20 @@ public class BoardMyBatisServiceTest extends AbstractServiceHelper {
 
     @Test
     public void getList() {
+
         // Given
         AccountDto account = accountDao.save(new AccountDto("test", "test", "test", "USER"));
-        boardService.create(BoardAddCommand.builder().title("test title").contents("test content").build(), account.getId());
-        boardService.create(BoardAddCommand.builder().title("test title").contents("test content").build(), account.getId());
-        boardService.create(BoardAddCommand.builder().title("test title").contents("test content").build(), account.getId());
+        boardService.create(BoardAddCommand.builder().title("mybatis list test").contents("mybatis test content").build(), account.getId());
+        boardService.create(BoardAddCommand.builder().title("mybatis list test").contents("mybatis test content").build(), account.getId());
+        boardService.create(BoardAddCommand.builder().title("mybatis list test").contents("mybatis test content").build(), account.getId());
 
-        PageCommand pageListCommand = new PageCommand(0, 2, "", "");
+        PageCommand pageListCommand = new PageCommand(0, 3, "", "");
 
         // When
         PagePresentation<BoardPresentation> pageList = boardService.getList(pageListCommand);
 
         // Then
         System.out.println((pageList).toString());
-        Assert.assertEquals("리스트의 총개수는 3개", 3, pageList.getResults());
+        assert pageList.getResults() >= 3;
     }
 }

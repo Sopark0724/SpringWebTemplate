@@ -2,7 +2,9 @@ package com.web.template.board.application;
 
 import com.web.template.board.application.data.BoardAddCommand;
 import com.web.template.board.application.data.BoardPresentation;
+import com.web.template.board.domain.BoardRepository;
 import com.web.template.common.AbstractServiceHelper;
+import com.web.template.common.AccountTestService;
 import com.web.template.common.application.data.PageCommand;
 import com.web.template.common.application.data.PagePresentation;
 import com.web.template.user.application.AccountService;
@@ -30,14 +32,17 @@ public class BoardServiceTest extends AbstractServiceHelper {
     private BoardService boardService;
 
     @Autowired
-    private AccountService accountService;
+    private AccountTestService accountService;
+
+    @Autowired
+    private BoardRepository boardRepository;
 
 
     @Test
     public void createTest() {
         // Given
 
-        AccountPresentation account = accountService.create(new AccountAddCommand("test", "test", "test", "USER"));
+        AccountPresentation account = accountService.getTestAccount();
         String title = "title test";
         String content = "cotent test";
         BoardAddCommand boardAddCommand = BoardAddCommand.builder().title(title).contents(content).build();
@@ -55,14 +60,14 @@ public class BoardServiceTest extends AbstractServiceHelper {
     @Test
     public void update() {
         // Given
-        AccountPresentation account = accountService.create(new AccountAddCommand("test", "test", "test", "USER"));
+        AccountPresentation account = accountService.getTestAccount();
         String originTitle = "board test";
         String originContent = "content test";
         BoardPresentation board = boardService.create(BoardAddCommand.builder().title (originTitle).contents(originContent).build(), account.getId());
 
         // When
         String updateContentText = "update content test";
-        BoardAddCommand boardAddCommand = BoardAddCommand.builder().title(originTitle).contents(originContent).build();
+        BoardAddCommand boardAddCommand = BoardAddCommand.builder().title(originTitle).contents(updateContentText).build();
         BoardPresentation result = boardService.update(board.getId(), boardAddCommand, account.getId());
 
         // Then
@@ -72,7 +77,7 @@ public class BoardServiceTest extends AbstractServiceHelper {
     @Test(expected = NoSuchElementException.class)
     public void delete() {
         // Given
-        AccountPresentation account = accountService.create(new AccountAddCommand("test", "test", "test", "USER"));
+        AccountPresentation account = accountService.getTestAccount();
 
         BoardPresentation board = boardService.create(BoardAddCommand.builder().title("test title").contents("test content").build(), account.getId());
 
@@ -86,8 +91,9 @@ public class BoardServiceTest extends AbstractServiceHelper {
 
     @Test
     public void getList() {
+
         // Given
-        AccountPresentation account = accountService.create(new AccountAddCommand("test", "test", "test", "USER"));
+        AccountPresentation account = accountService.getTestAccount();
         boardService.create(BoardAddCommand.builder().title("test title").contents("test content").build(), account.getId());
         boardService.create(BoardAddCommand.builder().title("test title").contents("test content").build(), account.getId());
         boardService.create(BoardAddCommand.builder().title("test title").contents("test content").build(), account.getId());
@@ -98,7 +104,7 @@ public class BoardServiceTest extends AbstractServiceHelper {
         PagePresentation<BoardPresentation> pageList = boardService.getList(pageListCommand);
 
         // Then
-        Assert.assertEquals("리스트의 총개수는 3개", 3, pageList.getResults());
+        assert pageList.getResults() >= 3;
 
     }
 
