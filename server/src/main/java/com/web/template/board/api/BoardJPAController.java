@@ -23,11 +23,6 @@ public class BoardJPAController {
     @Autowired
     private SpringSecurityContext context;
 
-    @PostMapping("/public/board")
-    public BoardPresentation createWithoutAuth(@RequestBody  BoardAddCommand boardAddCommand) {
-        return boardService.create(boardAddCommand, 1L);
-    }
-
     @PostMapping("/board")
     public BoardPresentation create(@RequestBody  BoardAddCommand boardAddCommand) {
         return boardService.create(boardAddCommand, context.getAccount().getId());

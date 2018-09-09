@@ -28,7 +28,8 @@ public class AttachmentsDao {
     }
 
     private Long getNextId() {
-        return this.sqlSession.selectOne("AttachmentsDAO.findNextId");
+        Long nextId = this.sqlSession.selectOne("AttachmentsDAO.findNextId");
+        return nextId == null ? 1L : nextId;
     }
 
     public List<AttachmentsDto> saveAll(List<AttachmentsDto> attachmentsDtos) {

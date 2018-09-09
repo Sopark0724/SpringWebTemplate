@@ -30,7 +30,8 @@ public class AttachmentsBoardMapDao {
     }
 
     private Long getNextId() {
-        return this.sqlSession.selectOne("AttachmentsBoardMapDAO.findNextId");
+        Long nextId = this.sqlSession.selectOne("AttachmentsBoardMapDAO.findNextId");
+        return nextId == null ? 1L : nextId;
     }
 
     public List<AttachmentsBoardMapDto> saveAll(List<AttachmentsBoardMapDto> attachmentsDtos) {

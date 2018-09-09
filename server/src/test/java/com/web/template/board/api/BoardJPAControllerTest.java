@@ -5,6 +5,7 @@ import com.web.template.TemplateApplication;
 import com.web.template.board.application.BoardService;
 import com.web.template.board.application.data.BoardAddCommand;
 import com.web.template.board.application.data.BoardPresentation;
+import com.web.template.common.AccountTestService;
 import com.web.template.common.MockMvcHelper;
 import com.web.template.user.application.AccountService;
 import com.web.template.user.application.data.AccountAddCommand;
@@ -48,7 +49,7 @@ public class BoardJPAControllerTest {
     private MockMvcHelper mockMvcHelper;
 
     @Autowired
-    private AccountService accountService;
+    private AccountTestService accountService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -57,21 +58,9 @@ public class BoardJPAControllerTest {
     @Qualifier("boardServiceJPAImpl")
     private BoardService boardService;
 
-    @Before
-    public void auth() {
-        AccountDetails accountDetails = new AccountDetails();
-        accountDetails.setUsername("test");
-        accountDetails.setPassword("test");
-        accountDetails.setName("test");
-        accountDetails.setRole("USER");
-
-        TestingAuthenticationToken testingAuthenticationToken = new TestingAuthenticationToken(accountDetails ,null);
-        SecurityContextHolder.getContext().setAuthentication(testingAuthenticationToken);
-    }
-
     @Test
     public void test_01_create_text_only() throws Exception {
-        AccountPresentation account = accountService.create(new AccountAddCommand("test", "test", "test", "USER"));
+        AccountPresentation account = accountService.getTestAccount();
 
         BoardAddCommand boardAddCommand = BoardAddCommand.builder().title("test board").contents("test content").build();
         String body = this.objectMapper.writeValueAsString(boardAddCommand);
@@ -79,7 +68,7 @@ public class BoardJPAControllerTest {
 
         ResultActions resultAction =
                 mockMvcHelper.perform(
-                        post("/v1/public/board")
+                        post("/v1/board").session(this.accountService.getTestSession())
                                 .content(body));
 
         // Then
@@ -95,7 +84,7 @@ public class BoardJPAControllerTest {
 
         ResultActions resultAction =
                 mockMvcHelper.perform(
-                        post("/v1/public/board")
+                        post("/v1/board").session(this.accountService.getTestSession())
                                 .content(body));
 
         // Then
@@ -133,7 +122,7 @@ public class BoardJPAControllerTest {
         // When
         ResultActions resultAction =
                 mockMvcHelper.perform(
-                        get("/v1/board/" + board.getId()));
+                        get("/v1/board/" + board.getId()).session(this.accountService.getTestSession()));
 
         // Then
         MvcResult mvcResult = resultAction
@@ -151,7 +140,7 @@ public class BoardJPAControllerTest {
     public void test_04_update() throws Exception {
 
         // create
-        AccountPresentation account = accountService.create(new AccountAddCommand("test", "test", "test", "USER"));
+        AccountPresentation account = accountService.getTestAccount();
 
         BoardAddCommand boardAddCommand = BoardAddCommand.builder().title("test board").contents("test content").build();
         BoardPresentation boardPresentation = boardService.create(boardAddCommand, account.getId());
@@ -161,7 +150,7 @@ public class BoardJPAControllerTest {
 
         ResultActions resultAction =
                 mockMvcHelper.perform(
-                        put("/v1/board/" + boardPresentation.getId())
+                        put("/v1/board/" + boardPresentation.getId()).session(this.accountService.getTestSession())
                                 .content(body));
 
         MvcResult updateResult = resultAction
@@ -179,14 +168,14 @@ public class BoardJPAControllerTest {
     public void test_05_delete_test() throws Exception {
 
         // create
-        AccountPresentation account = accountService.create(new AccountAddCommand("test", "test", "test", "USER"));
+        AccountPresentation account = accountService.getTestAccount();
 
         BoardAddCommand boardAddCommand = BoardAddCommand.builder().title("test board").contents("test content").build();
         BoardPresentation boardPresentation = boardService.create(boardAddCommand, account.getId());
 
         ResultActions resultAction =
                 mockMvcHelper.perform(
-                        delete("/v1/board/" + boardPresentation.getId()));
+                        delete("/v1/board/" + boardPresentation.getId()).session(this.accountService.getTestSession()));
 
         // Then
         resultAction
@@ -198,7 +187,7 @@ public class BoardJPAControllerTest {
     @Test
     public void test_07_getList() throws Exception {
         // Given
-        AccountPresentation account = accountService.create(new AccountAddCommand("test", "test", "test", "USER"));
+        AccountPresentation account = accountService.getTestAccount();
         boardService.create(BoardAddCommand.builder().title("test title").contents("test content").build(), account.getId());
         boardService.create(BoardAddCommand.builder().title("test title").contents("test content").build(), account.getId());
         boardService.create(BoardAddCommand.builder().title("test title").contents("test content").build(), account.getId());
@@ -206,7 +195,7 @@ public class BoardJPAControllerTest {
         // When
         ResultActions resultAction =
                 mockMvcHelper.perform(
-                        get("/v1/boards")
+                        get("/v1/boards").session(this.accountService.getTestSession())
                                 .param("page", "0")
                                 .param("offset", "10"));
 
