@@ -4,6 +4,7 @@ import com.web.template.org.application.OrgService;
 import com.web.template.org.application.data.DepartmentAddCommand;
 import com.web.template.org.application.data.DepartmentPresentation;
 import com.web.template.org.application.data.OrgPresentation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/v2")
+@Slf4j
 public class OrgMyBatisController {
 
     @Autowired
@@ -21,13 +23,14 @@ public class OrgMyBatisController {
 
     @PostMapping("/department")
     public DepartmentPresentation create(DepartmentAddCommand addCommand) {
-        DepartmentPresentation departmentPresentation = orgService.create(addCommand);
+        DepartmentPresentation departmentPresentation  = orgService.create(addCommand);
         return departmentPresentation;
     }
 
 
     @GetMapping("/org")
     public OrgPresentation getOrg(){
+        log.info("orb Test");
         return orgService.getTree();
     }
 }
