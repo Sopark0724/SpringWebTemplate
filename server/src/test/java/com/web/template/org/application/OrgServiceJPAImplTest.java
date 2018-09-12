@@ -6,8 +6,6 @@ import com.web.template.org.application.data.DepartmentAddCommand;
 import com.web.template.org.application.data.DepartmentPresentation;
 import com.web.template.org.application.data.DeptMemberAddCommand;
 import com.web.template.org.application.data.OrgPresentation;
-import com.web.template.user.application.AccountService;
-import com.web.template.user.application.data.AccountAddCommand;
 import com.web.template.user.application.data.AccountPresentation;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
@@ -15,9 +13,6 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
-import static org.junit.Assert.*;
 
 @Transactional
 @Slf4j
@@ -32,7 +27,7 @@ public class OrgServiceJPAImplTest extends AbstractServiceHelper {
     @Test
     public void create() {
         // Given
-        DepartmentAddCommand command = new DepartmentAddCommand(null, "test");
+        DepartmentAddCommand command = new DepartmentAddCommand(null, "SINGLE_ROOT");
 
         // When
         DepartmentPresentation dept = service.create(command);
