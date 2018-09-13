@@ -8,15 +8,22 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  */
 @Configuration
 @EnableWebSecurity
 @Slf4j
-public class SpringSecurityConfig extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
+public class SpringSecurityConfig extends WebSecurityConfigurerAdapter implements WebMvcConfigurer, AuthenticationSuccessHandler {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -32,6 +39,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter implement
 
     }
 
+
+
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
@@ -40,6 +49,14 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter implement
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
+        log.info("test1111");
         registry.addMapping("/**").allowedOrigins("*").allowedMethods("*").allowedHeaders("*");
+    }
+
+    @Override
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+        log.info("test1111");
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.sendRedirect("swagger-ui.html");
     }
 }
