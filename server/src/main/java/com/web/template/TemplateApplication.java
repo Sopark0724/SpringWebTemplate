@@ -7,11 +7,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.filter.CharacterEncodingFilter;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.servlet.Filter;
 
 @SpringBootApplication
 @MapperScan("com.web.template")
+@EnableWebMvc
 public class TemplateApplication {
 
     public static void main(String[] args) {
