@@ -30,6 +30,12 @@ public class BoardJPAController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "boardAddCommand", value = "게시판 정보", required = true, dataType = "BoardAddCommand", defaultValue = "")
     })
+
+    @PostMapping("/public/board")
+    public BoardPresentation createPublic(@RequestBody  BoardAddCommand boardAddCommand) {
+        return boardService.create(boardAddCommand, 1L);
+    }
+
     @PostMapping("/board")
     public BoardPresentation create(@RequestBody  BoardAddCommand boardAddCommand) {
         return boardService.create(boardAddCommand, context.getAccount().getId());
