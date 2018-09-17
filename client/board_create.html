@@ -76,7 +76,7 @@ uploadfile = function(boardId) {
      }
 
      $.ajax({
-         url: 'http://localhost:8080/attachments/upload/BOARD/' + boardId,
+         url: 'http://localhost:8080/v1/attachments/upload/BOARD/' + boardId,
          data: filedata,
          enctype: 'multipart/form-data',
          dataType: 'json',
