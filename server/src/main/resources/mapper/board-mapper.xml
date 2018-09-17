@@ -36,14 +36,14 @@
 
 
     <update id="update" parameterType="com.web.template.board.domain.dto.BoardDto">
-        update board set contents = #{contents} , title =#{title} , user_id = #{user_id} , updated_at = now()
+        update board set contents = #{contents} , title =#{title} , user_id = #{user_id} , updated_at = getdate()
         where id = #{id}
     </update>
 
     <insert id="insert" parameterType="com.web.template.board.domain.dto.BoardDto">
         insert into board
         (id, contents, title, user_id, created_at, updated_at)
-        values (#{id}, #{contents}, #{title}, #{user_id}, now(), now())
+        values (#{id}, #{contents}, #{title}, #{user_id}, getdate() , getdate() )
     </insert>
 
     <delete id="delete" parameterType="com.web.template.board.domain.dto.BoardDto">
