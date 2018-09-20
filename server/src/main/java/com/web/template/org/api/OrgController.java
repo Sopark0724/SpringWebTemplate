@@ -12,16 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/v2")
 @Slf4j
-public class OrgMyBatisController {
+public class OrgController {
 
     @Autowired
-    @Qualifier(value = "orgSercviceMyBatisImpl")
     private OrgService orgService;
 
     @ApiOperation(value = "부서 등록")
@@ -30,13 +27,13 @@ public class OrgMyBatisController {
     })
     @PostMapping("/department")
     public DepartmentPresentation create(DepartmentAddCommand addCommand) {
-        DepartmentPresentation departmentPresentation  = orgService.create(addCommand);
+        DepartmentPresentation departmentPresentation = orgService.create(addCommand);
         return departmentPresentation;
     }
 
     @ApiOperation(value = "조직도 트리 구조 조회")
     @GetMapping("/org")
-    public OrgPresentation getOrg(){
+    public OrgPresentation getOrg() {
         log.info("orb Test");
         return orgService.getTree();
     }

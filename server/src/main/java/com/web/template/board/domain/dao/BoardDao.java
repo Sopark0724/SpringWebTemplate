@@ -2,12 +2,10 @@ package com.web.template.board.domain.dao;
 
 import com.web.template.board.domain.dto.BoardDto;
 import com.web.template.common.application.data.PageCommand;
+import com.web.template.common.application.data.PagePresentation;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.session.SqlSession;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -25,11 +23,11 @@ public class BoardDao {
         return nextId != null ? nextId : 1L;
     }
 
-    public Page<BoardDto> findAll(PageCommand pageListCommand) {
+    public PagePresentation<BoardDto> findAll(PageCommand pageListCommand) {
         List<BoardDto> list = this.sqlSession.selectList("findBoardAll", null, pageListCommand.rowBounds());
         int totalCount = this.sqlSession.selectOne("findCountAll", null);
 
-        return new PageImpl<>(list, PageRequest.of(pageListCommand.getPage(), pageListCommand.getLimit()), totalCount);
+        return new PagePresentation<>(true, totalCount, list);
     }
 
     public BoardDto findById(Long id) {

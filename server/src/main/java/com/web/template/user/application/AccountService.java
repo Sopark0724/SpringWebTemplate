@@ -2,8 +2,8 @@ package com.web.template.user.application;
 
 import com.web.template.user.application.data.AccountAddCommand;
 import com.web.template.user.application.data.AccountPresentation;
-import com.web.template.user.domain.Account;
-import com.web.template.user.domain.AccountRepository;
+import com.web.template.user.domain.dao.AccountDao;
+import com.web.template.user.domain.dto.AccountDto;
 import com.web.template.user.model.AccountDetails;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,7 @@ import java.util.NoSuchElementException;
 public class AccountService {
 
     private final @NonNull
-    AccountRepository userRepository;
+    AccountDao accountDao;
 
     private final @NonNull
     AuthenticationManager authenticationManager;
@@ -32,13 +32,19 @@ public class AccountService {
     PasswordEncoder passwordEncoder;
 
     public AccountPresentation create(AccountAddCommand userAddCommand) {
-        Account account = new Account(userAddCommand.getName(), userAddCommand.getUsername(), userAddCommand.getPassword(), userAddCommand.getRole());
-        userRepository.save(account.encryptPassword(this.passwordEncoder));
+        AccountDto existAccount = this.accountDao.findFirsByUsername(userAddCommand.getUsername());
+        assert existAccount == null;
+
+        AccountDto account = new AccountDto(userAddCommand.getName(), userAddCommand.getUsername(), userAddCommand.getPassword(), userAddCommand.getRole());
+        accountDao.save(account.encryptPassword(this.passwordEncoder));
         return AccountPresentation.convertFrom(account);
     }
 
     public AccountPresentation findById(Long id) {
-        Account account = userRepository.findById(id).orElseThrow(NoSuchElementException::new);
+        AccountDto account = accountDao.findById(id);
+        if (account == null) {
+            throw new NoSuchElementException();
+        }
         return AccountPresentation.convertFrom(account);
     }
 

@@ -1,10 +1,16 @@
 package com.web.template.org.domain.dto;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.util.Date;
 
-@Data
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor
 public class DepartmentDto {
 
     private Long id;
@@ -22,7 +28,7 @@ public class DepartmentDto {
         this.parent_id = parent_id;
     }
 
-    public Long getParentId(){
+    public Long getParentId() {
         return this.parent_id;
     }
 }

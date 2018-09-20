@@ -11,7 +11,12 @@
     </select>
 
     <select id="findFirstOrderByIdDesc" resultType="com.web.template.user.domain.dto.AccountDto">
-        select * from account order by id desc limit 0, 1
+        select * from account order by id
+    </select>
+
+
+    <select id="findFirsByUsername" resultType="com.web.template.user.domain.dto.AccountDto">
+        select * from account where username=#{username}
     </select>
 
     <select id="findNextId" resultType="Long">

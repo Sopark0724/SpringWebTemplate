@@ -15,10 +15,6 @@
         select * from board where id = #{id}
     </select>
 
-    <select id="findFirstOrderByIdDesc" resultType="com.web.template.board.domain.dto.BoardDto">
-        select * from board order by id desc limit 0, 1
-    </select>
-
     <select id="findNextId" resultType="Long">
         select (max(id) +1) from board
     </select>

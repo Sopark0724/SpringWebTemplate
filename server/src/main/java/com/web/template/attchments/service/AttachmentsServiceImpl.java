@@ -27,7 +27,7 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class AttachmentsMyBatisServiceImpl implements AttachmentsService {
+public class AttachmentsServiceImpl implements AttachmentsService {
 
     private final @NonNull
     BoardDao boardDao;

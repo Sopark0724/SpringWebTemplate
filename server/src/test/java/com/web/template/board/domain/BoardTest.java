@@ -1,18 +1,21 @@
 package com.web.template.board.domain;
 
-import com.web.template.user.domain.Account;
+import com.web.template.board.domain.dto.BoardDto;
+import com.web.template.user.domain.dto.AccountDto;
 import org.junit.Assert;
 import org.junit.Test;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 public class BoardTest {
 
     @Test
     public void canUpdate_자신이쓴글() {
         // Given
 
-        Account account = new Account("test1", "login1", "123123", "USER");
+        AccountDto account = new AccountDto("test1", "login1", "123123", "USER");
         account.setId(1L);
-        Board board = new Board(account, "title test", "content test");
+        BoardDto board = new BoardDto(account, "title test", "content test");
 
         // When
         boolean canUpdate = board.canUpdate(account);
@@ -26,12 +29,12 @@ public class BoardTest {
     public void canUpdate_다른사람이쓴글() {
         // Given
 
-        Account account = new Account("test1", "login1", "123123", "USER");
+        AccountDto account = new AccountDto("test1", "login1", "123123", "USER");
         account.setId(1L);
-        Account account2 = new Account("test1", "login1", "123123", "USER");
+        AccountDto account2 = new AccountDto("test1", "login1", "123123", "USER");
 
         account.setId(2L);
-        Board board = new Board(account, "title test", "content test");
+        BoardDto board = new BoardDto(account, "title test", "content test");
 
         // When
         boolean canUpdate = board.canUpdate(account2);

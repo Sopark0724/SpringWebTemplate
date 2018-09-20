@@ -4,7 +4,6 @@ import com.web.template.attchments.domain.dao.AttachmentsBoardMapDao;
 import com.web.template.attchments.domain.dao.AttachmentsDao;
 import com.web.template.attchments.domain.dto.AttachmentsBoardMapDto;
 import com.web.template.attchments.domain.dto.AttachmentsDto;
-import com.web.template.attchments.mapper.AttachmentsBoardMap;
 import com.web.template.board.application.data.BoardAddCommand;
 import com.web.template.board.application.data.BoardPresentation;
 import com.web.template.board.domain.dao.BoardDao;
@@ -15,7 +14,6 @@ import com.web.template.user.domain.dao.AccountDao;
 import com.web.template.user.domain.dto.AccountDto;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.security.InvalidParameterException;
@@ -23,9 +21,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-@Service("boardServiceMyBatisImpl")
+@Service
 @RequiredArgsConstructor
-public class BoardServiceMyBatisImpl implements BoardService {
+public class BoardServiceImpl implements BoardService {
 
     private final @NonNull
     BoardDao boardDao;
@@ -101,7 +99,7 @@ public class BoardServiceMyBatisImpl implements BoardService {
         List<AttachmentsBoardMapDto> attachmentsBoardMaps = this.attachmentsBoardMapDao.findByBoard(board);
         List<AttachmentsDto> attachmentsDtos = new ArrayList<>();
         for (AttachmentsBoardMapDto attachmentsBoardMap : attachmentsBoardMaps) {
-            attachmentsDtos.add(this.attachmentsDao.findById(attachmentsBoardMap.getAttachments_id())) ;
+            attachmentsDtos.add(this.attachmentsDao.findById(attachmentsBoardMap.getAttachments_id()));
         }
 
         return BoardPresentation.convertFromDto(board, account, attachmentsDtos);
@@ -109,14 +107,16 @@ public class BoardServiceMyBatisImpl implements BoardService {
 
     @Override
     public PagePresentation<BoardPresentation> getList(PageCommand pageListCommand) {
-        Page<BoardDto> list = this.boardDao.findAll(pageListCommand);
+        PagePresentation<BoardDto> list = this.boardDao.findAll(pageListCommand);
 
         List<BoardPresentation> result = new ArrayList<>();
 
-        for (BoardDto boardDto : list.getContent()) {
+        for (BoardDto boardDto : list.getItems()) {
             result.add(BoardPresentation.convertFromDto(boardDto, this.getAccount(boardDto.getUser_id())));
         }
 
-        return new PagePresentation<>(true, list.getTotalElements(), result);
+
+        return new PagePresentation<>(true, list.getResults(), result);
+
     }
 }

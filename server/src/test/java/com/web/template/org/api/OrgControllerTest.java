@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {TemplateApplication.class, MockMvcHelper.class}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Transactional
-public class OrgMyBatisControllerTest {
+public class OrgControllerTest {
 
     @Autowired
     private MockMvcHelper mockMvcHelper;
@@ -44,7 +44,7 @@ public class OrgMyBatisControllerTest {
     @Test
     public void getOrg() throws Exception {
         // Given
-        AccountDto account = accountRepository.save(new AccountDto("test1","test1","1234", "USER"));
+        AccountDto account = accountRepository.save(new AccountDto("test1", "test1", "1234", "USER"));
         DepartmentDto root = departmentRepository.save(new DepartmentDto("ROOT", null));
         DepartmentDto sub1 = departmentRepository.save(new DepartmentDto("sub1", root.getId()));
         deptMemberDao.save(new DeptMemberDto(null, account.getId(), sub1.getId()));
@@ -59,7 +59,7 @@ public class OrgMyBatisControllerTest {
         // When
         ResultActions resultAction =
                 mockMvcHelper.perform(
-                        get("/v2/org"));
+                        get("/org"));
 
         // Then
         resultAction

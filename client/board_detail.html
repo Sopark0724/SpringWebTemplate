@@ -43,7 +43,7 @@ initBoard= function(){
     var id = $('input#boardId').val();
 
     $.ajax({
-        url: 'http://localhost:8080/v1/board/' + id,
+        url: 'http://localhost:8080/board/' + id,
         dataType: 'json',
         type: 'GET',
         success: function (data) {
@@ -64,7 +64,7 @@ initTemplate = function(board) {
     $('textarea#contents').val(board.content);
     $('input#title').val(board.title);
 
-    var basedownloadUrl ="http://localhost:8080/v1/attachments/download/"
+    var basedownloadUrl ="http://localhost:8080/attachments/download/"
 
     if(board.attachments && board.attachments.length > 0 ){
         board.attachments.forEach(att =>{
