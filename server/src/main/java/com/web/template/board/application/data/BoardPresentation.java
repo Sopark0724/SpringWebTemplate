@@ -1,9 +1,7 @@
 package com.web.template.board.application.data;
 
 import com.web.template.attchments.data.AttachmentsPresentation;
-import com.web.template.attchments.domain.Attachments;
 import com.web.template.attchments.domain.dto.AttachmentsDto;
-import com.web.template.board.domain.Board;
 import com.web.template.board.domain.dto.BoardDto;
 import com.web.template.user.domain.dto.AccountDto;
 import lombok.Value;
@@ -30,7 +28,7 @@ public class BoardPresentation {
 
     private List<AttachmentsPresentation> attachments;
 
-    private static List<AttachmentsPresentation> mapAttachments(List<Attachments> attachments) {
+    private static List<AttachmentsPresentation> mapAttachments(List<AttachmentsDto> attachments) {
         if (attachments == null || attachments.isEmpty()) {
             return new ArrayList<>();
         }
@@ -59,13 +57,4 @@ public class BoardPresentation {
                 board.getContents(), board.getCreated_at(), board.getUpdated_at(), mapAttachmentsDto(attachments));
     }
 
-    public static BoardPresentation convertFromEntity(Board board) {
-        return convertFromEntity(board, null);
-    }
-
-    public static BoardPresentation convertFromEntity(Board board, List<Attachments> attachments) {
-        return new BoardPresentation(
-                board.getId(), board.getWriterName(), board.getTitle(),
-                board.getContents(), board.getCreatedAt(), board.getUpdatedAt(), mapAttachments(attachments));
-    }
 }

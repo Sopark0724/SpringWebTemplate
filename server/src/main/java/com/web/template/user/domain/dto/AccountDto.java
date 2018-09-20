@@ -1,15 +1,16 @@
 package com.web.template.user.domain.dto;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.StringUtils;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-
-@Data
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor
 public class AccountDto {
 
     private Long id;

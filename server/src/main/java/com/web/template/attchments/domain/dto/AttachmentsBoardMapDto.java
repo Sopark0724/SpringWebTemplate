@@ -1,9 +1,13 @@
 package com.web.template.attchments.domain.dto;
 
 import com.web.template.board.domain.dto.BoardDto;
-import lombok.Data;
+import lombok.*;
 
-@Data
+
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor
 public class AttachmentsBoardMapDto {
 
     private Long id;

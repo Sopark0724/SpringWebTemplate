@@ -1,16 +1,19 @@
 package com.web.template.attchments.domain.dto;
 
 import com.web.template.constants.TemplateConstants;
-import lombok.Data;
+import lombok.*;
 import org.apache.tomcat.util.codec.binary.Base64;
-import org.aspectj.util.FileUtil;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
-@Data
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor
 public class AttachmentsDto {
 
     private Long id;
@@ -34,7 +37,8 @@ public class AttachmentsDto {
     }
 
     public byte[] readContent() throws IOException {
-        return FileUtil.readAsByteArray(new File(this.filepath));
+        File f = new File(this.filepath);
+        return Files.readAllBytes(f.toPath());
     }
 
 }

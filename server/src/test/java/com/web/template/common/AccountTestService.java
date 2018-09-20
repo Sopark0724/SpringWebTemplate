@@ -3,8 +3,8 @@ package com.web.template.common;
 import com.web.template.user.application.AccountService;
 import com.web.template.user.application.data.AccountAddCommand;
 import com.web.template.user.application.data.AccountPresentation;
-import com.web.template.user.domain.Account;
-import com.web.template.user.domain.AccountRepository;
+import com.web.template.user.domain.dao.AccountDao;
+import com.web.template.user.domain.dto.AccountDto;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mock.web.MockHttpSession;
@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 public class AccountTestService {
 
     private final @NonNull
-    AccountRepository accountRepository;
+    AccountDao accountDao;
     private final @NonNull
     AccountService accountService;
 
@@ -30,7 +30,7 @@ public class AccountTestService {
 
     public AccountPresentation getTestAccount() {
         AccountAddCommand accountAddCommand = AccountAddCommand.builder().name("hsim").username("hsim").password("1234").role("USER").build();
-        Account account = this.accountRepository.findFirstByUsername(accountAddCommand.getUsername());
+        AccountDto account = this.accountDao.findFirsByUsername(accountAddCommand.getUsername());
         if (account == null) {
             return this.accountService.create(accountAddCommand);
         }

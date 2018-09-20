@@ -1,6 +1,6 @@
-package com.web.template.attchments.mapper.component;
+package com.web.template.attchments.map.component;
 
-import com.web.template.attchments.domain.Attachments;
+import com.web.template.attchments.domain.dto.AttachmentsDto;
 import com.web.template.attchments.type.AttachmentsType;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +33,7 @@ public class AttachMapManager {
         });
     }
 
-    public void map(@NonNull AttachmentsType attachmentsType, @NonNull Attachments attachments, @NonNull Long id) {
+    public void map(@NonNull AttachmentsType attachmentsType, @NonNull AttachmentsDto attachments, @NonNull Long id) {
         AttachMap mapper = this.attachmentsMapperMap.get(attachmentsType);
         if (mapper == null) {
             throw new NullPointerException();

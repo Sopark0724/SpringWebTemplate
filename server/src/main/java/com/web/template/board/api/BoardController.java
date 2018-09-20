@@ -10,20 +10,22 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/v2")
-public class BoardMyBatisController {
+public class BoardController {
 
     @Autowired
-    @Qualifier(value = "boardServiceMyBatisImpl")
     private BoardService boardService;
 
     @Autowired
     private SpringSecurityContext context;
+
+    @PostMapping("/public/board")
+    public BoardPresentation publicCreate(@RequestBody BoardAddCommand boardAddCommand) {
+        return boardService.create(boardAddCommand, 1L);
+    }
 
     @ApiOperation(value = "게시판 생성")
     @ApiImplicitParams({

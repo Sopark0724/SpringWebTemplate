@@ -29,6 +29,10 @@ public class AccountDao {
         return this.sqlSession.selectOne("AccountDAO.findById", id);
     }
 
+    public AccountDto findFirsByUsername(String userName) {
+        return this.sqlSession.selectOne("AccountDAO.findFirsByUsername", userName);
+    }
+
     public List<AccountDto> saveAll(List<AccountDto> accountList) {
         return accountList.stream().map(this::save).collect(Collectors.toList());
     }

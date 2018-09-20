@@ -47,7 +47,7 @@ writeBoard = function(){
     var body = JSON.stringify({title : $('input#title').val(), contents: $('textarea#contents').val()})
 
     $.ajax({
-        url: 'http://localhost:8080/v1/public/board',
+        url: 'http://localhost:8080/public/board',
         data: body,
         dataType: 'json',
         contentType: "application/json; charset=UTF-8",
@@ -76,7 +76,7 @@ uploadfile = function(boardId) {
      }
 
      $.ajax({
-         url: 'http://localhost:8080/v1/attachments/upload/BOARD/' + boardId,
+         url: 'http://localhost:8080/attachments/upload/BOARD/' + boardId,
          data: filedata,
          enctype: 'multipart/form-data',
          dataType: 'json',

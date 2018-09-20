@@ -1,11 +1,14 @@
 package com.web.template.board.domain.dto;
 
 import com.web.template.user.domain.dto.AccountDto;
-import lombok.Data;
+import lombok.*;
 
 import java.util.Date;
 
-@Data
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor
 public class BoardDto {
 
     private Long id;
