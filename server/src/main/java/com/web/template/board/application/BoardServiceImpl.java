@@ -17,9 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.security.InvalidParameterException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -59,8 +57,11 @@ public class BoardServiceImpl implements BoardService {
     public BoardPresentation create(BoardAddCommand boardAddCommand, Long creatorId) {
 
         AccountDto account = this.getAccount(creatorId);
-
-        BoardDto board = this.boardDao.save(new BoardDto(account, boardAddCommand.getTitle(), boardAddCommand.getContents()));
+        Map<String, Object> params = new LinkedHashMap<>();
+        params.put("contents", boardAddCommand.getContents());
+        params.put("title", boardAddCommand.getTitle());
+        params.put("user_id", creatorId);
+        BoardDto board = this.boardDao.save(params);
         return BoardPresentation.convertFromDto(board, account);
     }
 
@@ -75,7 +76,12 @@ public class BoardServiceImpl implements BoardService {
 
         board.update(boardAddCommand.getTitle(), boardAddCommand.getContents());
 
-        board = this.boardDao.save(board);
+        Map<String, Object> params = new HashMap<>();
+        params.put("title", boardAddCommand.getTitle());
+        params.put("id", boardId);
+        params.put("contents", boardAddCommand.getContents());
+
+        board = this.boardDao.save(params);
 
         return BoardPresentation.convertFromDto(board, account);
     }

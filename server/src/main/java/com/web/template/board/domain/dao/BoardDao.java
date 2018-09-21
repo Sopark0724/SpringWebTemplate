@@ -9,7 +9,9 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 @RequiredArgsConstructor
@@ -17,6 +19,18 @@ public class BoardDao {
 
     private final @NonNull
     SqlSession sqlSession;
+
+    public BoardDto save(Map<String, Object> params) {
+        if (params.get("id") != null) {
+            this.sqlSession.update("BoardDAO.update", params);
+        } else {
+            params.put("id", this.getNextId());
+            Map sqlParam = new HashMap<>();
+            sqlParam.put("params", params);
+            this.sqlSession.insert("BoardDAO.insert", sqlParam);
+        }
+        return this.sqlSession.selectOne("BoardDAO.findById", params.get("id"));
+    }
 
     private Long getNextId() {
         Long nextId = this.sqlSession.selectOne("BoardDAO.findNextId");
@@ -32,26 +46,6 @@ public class BoardDao {
 
     public BoardDto findById(Long id) {
         return this.sqlSession.selectOne("BoardDAO.findById", id);
-    }
-
-    public List<BoardDto> saveAll(List<BoardDto> boardList) {
-        List<BoardDto> saveResult = new ArrayList<>();
-
-        for (BoardDto boardDto : boardList) {
-            saveResult.add(this.save(boardDto));
-        }
-        return saveResult;
-        //return boardList.stream().map(this::save).collect(Collectors.toList());
-    }
-
-    public BoardDto save(BoardDto board) {
-        if (board.getId() != null) {
-            this.sqlSession.update("BoardDAO.update", board);
-        } else {
-            board.setId(this.getNextId());
-            this.sqlSession.insert("BoardDAO.insert", board);
-        }
-        return this.sqlSession.selectOne("BoardDAO.findById", board.getId());
     }
 
     public void deleteAll(List<BoardDto> boardList) {

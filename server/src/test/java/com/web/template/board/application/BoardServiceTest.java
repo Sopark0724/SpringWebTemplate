@@ -29,7 +29,7 @@ import static org.junit.Assert.assertNotNull;
 public class BoardServiceTest extends AbstractServiceHelper {
 
     @Autowired
-    private BoardService boardServiceJPAImpl;
+    private BoardService boardServiceImpl;
 
     @Autowired
     private AccountTestService accountService;
@@ -45,7 +45,7 @@ public class BoardServiceTest extends AbstractServiceHelper {
         BoardAddCommand boardAddCommand = BoardAddCommand.builder().title(title).contents(content).build();
 
         // When
-        BoardPresentation board = boardServiceJPAImpl.create(boardAddCommand, account.getId());
+        BoardPresentation board = boardServiceImpl.create(boardAddCommand, account.getId());
 
         // Then
         assertNotNull("생성된 객체는 null 이 아니다.", board);
@@ -60,12 +60,12 @@ public class BoardServiceTest extends AbstractServiceHelper {
         AccountPresentation account = accountService.getTestAccount();
         String originTitle = "board test";
         String originContent = "content test";
-        BoardPresentation board = boardServiceJPAImpl.create(BoardAddCommand.builder().title(originTitle).contents(originContent).build(), account.getId());
+        BoardPresentation board = boardServiceImpl.create(BoardAddCommand.builder().title(originTitle).contents(originContent).build(), account.getId());
 
         // When
         String updateContentText = "update content test";
         BoardAddCommand boardAddCommand = BoardAddCommand.builder().title(originTitle).contents(updateContentText).build();
-        BoardPresentation result = boardServiceJPAImpl.update(board.getId(), boardAddCommand, account.getId());
+        BoardPresentation result = boardServiceImpl.update(board.getId(), boardAddCommand, account.getId());
 
         // Then
         assertEquals("변경된 컨텐츠 내용 출력", updateContentText, result.getContent());
@@ -76,11 +76,11 @@ public class BoardServiceTest extends AbstractServiceHelper {
         // Given
         AccountPresentation account = accountService.getTestAccount();
 
-        BoardPresentation board = boardServiceJPAImpl.create(BoardAddCommand.builder().title("test title").contents("test content").build(), account.getId());
+        BoardPresentation board = boardServiceImpl.create(BoardAddCommand.builder().title("test title").contents("test content").build(), account.getId());
 
         // When
-        boardServiceJPAImpl.delete(board.getId(), account.getId());
-        BoardPresentation boardPresentation = boardServiceJPAImpl.get(board.getId());
+        boardServiceImpl.delete(board.getId(), account.getId());
+        BoardPresentation boardPresentation = boardServiceImpl.get(board.getId());
 
         // Then
 
@@ -91,14 +91,14 @@ public class BoardServiceTest extends AbstractServiceHelper {
 
         // Given
         AccountPresentation account = accountService.getTestAccount();
-        boardServiceJPAImpl.create(BoardAddCommand.builder().title("test title").contents("test content").build(), account.getId());
-        boardServiceJPAImpl.create(BoardAddCommand.builder().title("test title").contents("test content").build(), account.getId());
-        boardServiceJPAImpl.create(BoardAddCommand.builder().title("test title").contents("test content").build(), account.getId());
+        boardServiceImpl.create(BoardAddCommand.builder().title("test title").contents("test content").build(), account.getId());
+        boardServiceImpl.create(BoardAddCommand.builder().title("test title").contents("test content").build(), account.getId());
+        boardServiceImpl.create(BoardAddCommand.builder().title("test title").contents("test content").build(), account.getId());
 
         PageCommand pageListCommand = new PageCommand(0, 10, "", "");
 
         // When
-        PagePresentation<BoardPresentation> pageList = boardServiceJPAImpl.getList(pageListCommand);
+        PagePresentation<BoardPresentation> pageList = boardServiceImpl.getList(pageListCommand);
 
         // Then
         assert pageList.getResults() >= 3;
