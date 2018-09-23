@@ -2,11 +2,11 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="DepartmentDao">
-    <select id="findAll" resultType="com.web.template.org.domain.dto.DepartmentDto">
+    <select id="findAll" resultType="java.util.LinkedHashMap">
         select * from account
     </select>
 
-    <select id="findById" resultType="com.web.template.org.domain.dto.DepartmentDto">
+    <select id="findById" resultType="java.util.LinkedHashMap">
         select * from department where id = #{id}
     </select>
 
@@ -14,20 +14,20 @@
         select (max(id) +1) from department
     </select>
 
-    <select id="findByParentIsNull" resultType="com.web.template.org.domain.dto.DepartmentDto">
+    <select id="findByParentIsNull" resultType="java.util.LinkedHashMap">
         select * from department where parent_id is null
     </select>
 
-    <select id="findByParent" resultType="com.web.template.org.domain.dto.DepartmentDto">
+    <select id="findByParent" resultType="java.util.LinkedHashMap">
         select * from department where parent_id = #{parent_id}
     </select>
 
-    <update id="update" parameterType="com.web.template.org.domain.dto.DepartmentDto">
+    <update id="update" parameterType="java.util.LinkedHashMap">
         update department set name = #{name} , parent_id=#{parent_id}
         where id = #{id}
     </update>
 
-    <insert id="insert" parameterType="com.web.template.org.domain.dto.DepartmentDto">
+    <insert id="insert" parameterType="java.util.LinkedHashMap">
         insert into department
         (id, name, parent_id)
         values (#{id}, #{name}, #{parent_id})

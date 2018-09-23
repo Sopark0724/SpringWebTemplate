@@ -6,17 +6,13 @@ import com.web.template.org.application.data.DeptMemberAddCommand;
 import com.web.template.org.application.data.OrgPresentation;
 import com.web.template.org.domain.dao.DepartmentDao;
 import com.web.template.org.domain.dao.DeptMemberDao;
-import com.web.template.org.domain.dto.DepartmentDto;
-import com.web.template.org.domain.dto.DeptMemberDto;
 import com.web.template.user.domain.dao.AccountDao;
-import com.web.template.user.domain.dto.AccountDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class OrgServiceImpl implements OrgService {
@@ -32,24 +28,31 @@ public class OrgServiceImpl implements OrgService {
 
     @Override
     public DepartmentPresentation create(DepartmentAddCommand addCommand) {
-        DepartmentDto parent = null;
+        Map parent = null;
         if (addCommand.getParentId() != null) {
             parent = deptRepository.findById(addCommand.getParentId());
             assert parent != null;
         }
 
-        DepartmentDto result = deptRepository.save(new DepartmentDto(addCommand.getName(), addCommand.getParentId()));
-        return new DepartmentPresentation(result.getId(), result.getName(), result.getParentId());
+
+        LinkedHashMap<String, Object> addMap = new LinkedHashMap();
+        addMap.put("name", addCommand.getName());
+        addMap.put("parent_id", addCommand.getParentId());
+
+
+        Map result = deptRepository.save(addMap);
+        return new DepartmentPresentation((Long)result.get("id"), (String)result.get("name"), (Long)result.get("parent_id"));
     }
 
     @Override
     @Transactional
     public OrgPresentation getTree() {
-        DepartmentDto root = deptRepository.findByParentIsNull();
+        Map root = deptRepository.findByParentIsNull();
 
-        List<DepartmentDto> childrend = deptRepository.findByParent(root.getId());
+        List<LinkedHashMap> childrend = deptRepository.findByParent((Long)root.get("id"));
+
         List<OrgPresentation> orgTree = new ArrayList<>();
-        for (DepartmentDto departmentDto : childrend) {
+        for (LinkedHashMap departmentDto : childrend) {
             orgTree.add(this.recursiveDept(departmentDto));
         }
 
@@ -57,15 +60,15 @@ public class OrgServiceImpl implements OrgService {
         return new OrgPresentation("ROOT", expanded, orgTree, false);
     }
 
-    private OrgPresentation recursiveDept(DepartmentDto department) {
-        List<DepartmentDto> departments = deptRepository.findByParent(department.getId());
+    private OrgPresentation recursiveDept(LinkedHashMap department) {
+        List<LinkedHashMap> departments = deptRepository.findByParent((Long) department.get("id"));
 
         OrgPresentation orgPresentation;
         if (!CollectionUtils.isEmpty(departments)) {
             orgPresentation = new OrgPresentation();
 
             List<OrgPresentation> children = new ArrayList<>();
-            for (DepartmentDto departmentDto : departments) {
+            for (LinkedHashMap departmentDto : departments) {
                 children.add(this.recursiveDept(departmentDto));
             }
 
@@ -75,20 +78,24 @@ public class OrgServiceImpl implements OrgService {
             return orgPresentation;
         }
 
-        List<DeptMemberDto> deptMembers = deptMemberRepository.findByParent(department.getId());
+        List<LinkedHashMap> deptMembers = deptMemberRepository.findByParent((Long) department.get("id"));
         List<OrgPresentation> members = new ArrayList<>();
-        for (DeptMemberDto deptMember : deptMembers) {
-            AccountDto account = accountRepository.findById(deptMember.getAccount_id());
-            members.add(new OrgPresentation(account.getName(), false, null, true));
+        for (LinkedHashMap deptMember : deptMembers) {
+            HashMap account = accountRepository.findById(deptMember.get("account_id"));
+            members.add(new OrgPresentation((String) account.get("name"), false, null, true));
         }
 
-        orgPresentation = new OrgPresentation(department.getName(), false, members, true);
+        orgPresentation = new OrgPresentation((String) department.get("name"), false, members, true);
 
         return orgPresentation;
     }
 
     @Override
     public void addMember(DeptMemberAddCommand addCommand) {
-        deptMemberRepository.save(new DeptMemberDto(addCommand.getId(), addCommand.getUserId(), addCommand.getDeptId()));
+        LinkedHashMap addMap =new LinkedHashMap();
+        addMap.put("id", addCommand.getId());
+        addMap.put("account_id", addCommand.getUserId());
+        addMap.put("department_id", addCommand.getDeptId());
+        deptMemberRepository.save(addMap);
     }
 }

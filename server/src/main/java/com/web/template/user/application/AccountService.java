@@ -1,9 +1,7 @@
 package com.web.template.user.application;
 
 import com.web.template.user.application.data.AccountAddCommand;
-import com.web.template.user.application.data.AccountPresentation;
 import com.web.template.user.domain.dao.AccountDao;
-import com.web.template.user.domain.dto.AccountDto;
 import com.web.template.user.model.AccountDetails;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +14,9 @@ import org.springframework.security.web.context.HttpSessionSecurityContextReposi
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpSession;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 @Service
@@ -31,30 +32,34 @@ public class AccountService {
     private final @NonNull
     PasswordEncoder passwordEncoder;
 
-    public AccountPresentation create(AccountAddCommand userAddCommand) {
-        AccountDto existAccount = this.accountDao.findFirsByUsername(userAddCommand.getUsername());
+    public Map create(AccountAddCommand userAddCommand) {
+        HashMap existAccount = this.accountDao.findFirsByUsername(userAddCommand.getUsername());
         assert existAccount == null;
 
-        AccountDto account = new AccountDto(userAddCommand.getName(), userAddCommand.getUsername(), userAddCommand.getPassword(), userAddCommand.getRole());
-        accountDao.save(account.encryptPassword(this.passwordEncoder));
-        return AccountPresentation.convertFrom(account);
+        LinkedHashMap<String, Object> accountMap = new LinkedHashMap<>();
+        accountMap.put("name", userAddCommand.getName());
+        accountMap.put("username", userAddCommand.getUsername());
+        accountMap.put("role", userAddCommand.getRole());
+        accountMap.put("password", passwordEncoder.encode(userAddCommand.getPassword()));
+        return accountDao.save(accountMap);
+
     }
 
-    public AccountPresentation findById(Long id) {
-        AccountDto account = accountDao.findById(id);
+    public Map findById(Long id) {
+        HashMap account = accountDao.findById(id);
         if (account == null) {
             throw new NoSuchElementException();
         }
-        return AccountPresentation.convertFrom(account);
+        return account;
     }
 
-    public AccountPresentation login(AccountDetails accountDetails, HttpSession httpSession) {
+    public Object login(AccountDetails accountDetails, HttpSession httpSession) {
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(accountDetails.getUsername(), accountDetails.getPassword());
         Authentication authentication = this.authenticationManager.authenticate(token);
         SecurityContextHolder.getContext().setAuthentication(authentication);
         httpSession.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
 
-        return AccountPresentation.convertFrom(authentication.getPrincipal());
+        return authentication.getPrincipal();
     }
 
 }

@@ -1,13 +1,12 @@
 package com.web.template.attchments.domain.dao;
 
-import com.web.template.attchments.domain.dto.AttachmentsBoardMapDto;
-import com.web.template.board.domain.dto.BoardDto;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 @Repository
@@ -17,16 +16,16 @@ public class AttachmentsBoardMapDao {
     private final @NonNull
     SqlSession sqlSession;
 
-    public List<AttachmentsBoardMapDto> findAll() {
+    public List<LinkedHashMap> findAll() {
         return this.sqlSession.selectList("AttachmentsBoardMapDAO.findAll");
     }
 
-    public AttachmentsBoardMapDto findById(Long id) {
+    public LinkedHashMap findById(Long id) {
         return this.sqlSession.selectOne("AttachmentsBoardMapDAO.findById", id);
     }
 
-    public List<AttachmentsBoardMapDto> findByBoard(BoardDto boardDto) {
-        return this.sqlSession.selectList("AttachmentsBoardMapDAO.findByBoard", boardDto);
+    public List<LinkedHashMap> findByBoard(LinkedHashMap board) {
+        return this.sqlSession.selectList("AttachmentsBoardMapDAO.findByBoard", board);
     }
 
     private Long getNextId() {
@@ -34,17 +33,17 @@ public class AttachmentsBoardMapDao {
         return nextId == null ? 1L : nextId;
     }
 
-    public List<AttachmentsBoardMapDto> saveAll(List<AttachmentsBoardMapDto> attachmentsDtos) {
-        List<AttachmentsBoardMapDto> savedList = new ArrayList<>();
-        for (AttachmentsBoardMapDto attachmentsDto : attachmentsDtos) {
+    public List<LinkedHashMap> saveAll(List<LinkedHashMap> attachmentsDtos) {
+        List<LinkedHashMap> savedList = new ArrayList<>();
+        for (LinkedHashMap attachmentsDto : attachmentsDtos) {
             savedList.add(this.save(attachmentsDto));
         }
         return savedList;
     }
 
-    public AttachmentsBoardMapDto save(AttachmentsBoardMapDto attachmentsDto) {
-        if (attachmentsDto.getId() == null) {
-            attachmentsDto.setId(this.getNextId());
+    public LinkedHashMap save(LinkedHashMap attachmentsDto) {
+        if (attachmentsDto.get("id") == null) {
+            attachmentsDto.put("id",this.getNextId());
             sqlSession.insert("AttachmentsBoardMapDAO.insert", attachmentsDto);
         } else {
             sqlSession.update("AttachmentsBoardMapDAO.update", attachmentsDto);
@@ -52,13 +51,13 @@ public class AttachmentsBoardMapDao {
         return attachmentsDto;
     }
 
-    public void deleteAll(List<AttachmentsBoardMapDto> attachmentsDtos) {
-        for (AttachmentsBoardMapDto attachmentsDto : attachmentsDtos) {
+    public void deleteAll(List<LinkedHashMap> attachmentsDtos) {
+        for (LinkedHashMap attachmentsDto : attachmentsDtos) {
             this.delete(attachmentsDto);
         }
     }
 
-    public void delete(AttachmentsBoardMapDto attachmentsDto) {
+    public void delete(LinkedHashMap attachmentsDto) {
         sqlSession.delete("AttachmentsBoardMapDAO.delete", attachmentsDto);
     }
 

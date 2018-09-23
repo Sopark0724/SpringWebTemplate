@@ -32,7 +32,7 @@ public class AccountControllerTest {
     @Test
     public void create() throws Exception {
         // Given
-        String requestPayload = "{\"name\" : \"tester\", \"role\" : \"USER\",\"username\" : \"test2\", \"password\" : \"1234\"}";
+        String requestPayload = "{\"name\" : \"tester\", \"role\" : \"USER\",\"username\" : \"test_2\", \"password\" : \"1234\"}";
 
         // When
         ResultActions resultAction =
@@ -50,9 +50,9 @@ public class AccountControllerTest {
     @Test
     public void login() throws Exception {
 
-        this.accountService.create(AccountAddCommand.builder().name("tester").role("USER").username("test2").password("1234").build());
+        this.accountService.create(AccountAddCommand.builder().name("tester").role("USER").username("test_2").password("1234").build());
         // Given
-        String requestPayload = "{\"name\" : \"tester\", \"role\" : \"USER\",\"username\" : \"test2\", \"password\" : \"1234\"}";
+        String requestPayload = "{\"name\" : \"tester\", \"role\" : \"USER\",\"username\" : \"test_2\", \"password\" : \"1234\"}";
 
         // When
         ResultActions resultAction =

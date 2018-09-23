@@ -4,10 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.web.template.TemplateApplication;
 import com.web.template.board.application.BoardService;
 import com.web.template.board.application.data.BoardAddCommand;
-import com.web.template.board.application.data.BoardPresentation;
 import com.web.template.common.AccountTestService;
 import com.web.template.common.MockMvcHelper;
-import com.web.template.user.application.data.AccountPresentation;
 import com.web.template.user.domain.dao.AccountDao;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,6 +20,10 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -80,7 +82,7 @@ public class BoardControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk()).andReturn();
 
-        BoardPresentation boardPresentation = this.objectMapper.readValue(mvcResult.getResponse().getContentAsString(), BoardPresentation.class);
+        HashMap boardPresentation = this.objectMapper.readValue(mvcResult.getResponse().getContentAsString(), HashMap.class);
 
         // Then
         resultAction
@@ -90,9 +92,9 @@ public class BoardControllerTest {
         this.test_03_board_upload_attachments(boardPresentation);
     }
 
-    private void test_03_board_upload_attachments(BoardPresentation board) throws Exception {
+    private void test_03_board_upload_attachments(HashMap board) throws Exception {
         MockMultipartFile mockMultipartFile = new MockMultipartFile("file", "testfile.txt", MediaType.TEXT_PLAIN_VALUE, "testFileContent".getBytes());
-        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart("/attachments/upload/BOARD/" + board.getId()).file(mockMultipartFile);
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart("/attachments/upload/BOARD/" + board.get("id")).file(mockMultipartFile);
 
         // When
         ResultActions resultAction =
@@ -106,20 +108,20 @@ public class BoardControllerTest {
         this.board_attachments_file_check(board);
     }
 
-    private void board_attachments_file_check(BoardPresentation board) throws Exception {
+    private void board_attachments_file_check(HashMap board) throws Exception {
         // When
         ResultActions resultAction =
                 mockMvcHelper.perform(
-                        get("/board/" + board.getId()).session(this.accountTestService.getTestSession()));
+                        get("/board/" + board.get("id")).session(this.accountTestService.getTestSession()));
 
         // Then
         MvcResult mvcResult = resultAction
                 .andDo(print())
                 .andExpect(status().isOk()).andReturn();
 
-        BoardPresentation boardPresentation = this.objectMapper.readValue(mvcResult.getResponse().getContentAsString(), BoardPresentation.class);
+        HashMap boardPresentation = this.objectMapper.readValue(mvcResult.getResponse().getContentAsString(), HashMap.class);
 
-        Assert.notEmpty(boardPresentation.getAttachments(), "Attahcments file is empty");
+        Assert.notEmpty((ArrayList) boardPresentation.get("attachments"), "Attahcments file is empty");
 
     }
 
@@ -127,38 +129,38 @@ public class BoardControllerTest {
     public void test_04_update() throws Exception {
 
         // create
-        AccountPresentation accountPresentation = this.accountTestService.getTestAccount();
+        Map accountPresentation = this.accountTestService.getTestAccount();
 
         BoardAddCommand boardAddCommand = BoardAddCommand.builder().title("test board").contents("test content").build();
-        BoardPresentation boardPresentation = boardService.create(boardAddCommand, accountPresentation.getId());
+        Map boardPresentation = boardService.create(boardAddCommand, (Long) accountPresentation.get("id"));
         //update
         boardAddCommand = BoardAddCommand.builder().title("updated").contents("updated").build();
         String body = this.objectMapper.writeValueAsString(boardAddCommand);
 
         ResultActions resultAction =
                 mockMvcHelper.perform(
-                        put("/board/" + boardPresentation.getId()).session(this.accountTestService.getTestSession())
+                        put("/board/" + boardPresentation.get("id")).session(this.accountTestService.getTestSession())
                                 .content(body));
 
         MvcResult updateResult = resultAction
                 .andDo(print())
                 .andExpect(status().isOk()).andReturn();
 
-        BoardPresentation updated = this.objectMapper.readValue(updateResult.getResponse().getContentAsString(), BoardPresentation.class);
+        HashMap updated = this.objectMapper.readValue(updateResult.getResponse().getContentAsString(), HashMap.class);
 
-        org.junit.Assert.assertEquals(updated.getTitle(), "updated");
-        org.junit.Assert.assertEquals(updated.getContent(), "updated");
+        org.junit.Assert.assertEquals(updated.get("title"), "updated");
+        org.junit.Assert.assertEquals(updated.get("contents"), "updated");
     }
 
     @Test
     public void test_05_delete_test() throws Exception {
 
         BoardAddCommand boardAddCommand = BoardAddCommand.builder().title("test board").contents("test content").build();
-        BoardPresentation boardPresentation = boardService.create(boardAddCommand, this.accountTestService.getTestAccount().getId());
+        Map boardPresentation = boardService.create(boardAddCommand, (Long) this.accountTestService.getTestAccount().get("id"));
 
         ResultActions resultAction =
                 mockMvcHelper.perform(
-                        delete("/board/" + boardPresentation.getId()).session(this.accountTestService.getTestSession()));
+                        delete("/board/" + boardPresentation.get("id")).session(this.accountTestService.getTestSession()));
 
         // Then
         resultAction
@@ -170,10 +172,10 @@ public class BoardControllerTest {
     @Test
     public void getList() throws Exception {
         // Given
-        AccountPresentation account = this.accountTestService.getTestAccount();
-        boardService.create(BoardAddCommand.builder().title("test title").contents("test content").build(), account.getId());
-        boardService.create(BoardAddCommand.builder().title("test title").contents("test content").build(), account.getId());
-        boardService.create(BoardAddCommand.builder().title("test title").contents("test content").build(), account.getId());
+        Map account = this.accountTestService.getTestAccount();
+        boardService.create(BoardAddCommand.builder().title("test title").contents("test content").build(),(Long)account.get("id"));
+        boardService.create(BoardAddCommand.builder().title("test title").contents("test content").build(),(Long)account.get("id"));
+        boardService.create(BoardAddCommand.builder().title("test title").contents("test content").build(),(Long)account.get("id"));
 
         // When
         ResultActions resultAction =

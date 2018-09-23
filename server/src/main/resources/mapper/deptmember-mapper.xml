@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="DeptMemberDao">
-    <select id="findByDepartment" resultType="com.web.template.org.domain.dto.DeptMemberDto">
+    <select id="findByDepartment" resultType="java.util.LinkedHashMap">
         select * from dept_member where department_id = null
     </select>
 
@@ -10,12 +10,12 @@
         select (max(id) +1) from dept_member
     </select>
 
-    <update id="update" parameterType="com.web.template.org.domain.dto.DeptMemberDto">
+    <update id="update" parameterType="java.util.LinkedHashMap">
         update dept_member set account_id = #{account_id} , department_id=#{department_id}
         where id = #{id}
     </update>
 
-    <insert id="insert" parameterType="com.web.template.org.domain.dto.DeptMemberDto">
+    <insert id="insert" parameterType="java.util.LinkedHashMap">
         insert into dept_member
         (id, department_id, account_id)
         values (#{id}, #{department_id}, #{account_id})

@@ -3,33 +3,33 @@
 
 
 <mapper namespace="AttachmentsDAO">
-    <select id="findAll" resultType="com.web.template.attchments.domain.dto.AttachmentsDto">
+    <select id="findAll" resultType="java.util.LinkedHashMap">
         select * from attachments
     </select>
 
-    <select id="findById" resultType="com.web.template.attchments.domain.dto.AttachmentsDto">
+    <select id="findById" resultType="java.util.LinkedHashMap">
         select * from attachments where id = #{id}
     </select>
 
-    <select id="findByFakename" resultType="com.web.template.attchments.domain.dto.AttachmentsDto">
+    <select id="findByFakename" resultType="java.util.LinkedHashMap">
         select * from attachments where fakename = #{fakename}
     </select>
     <select id="findNextId" resultType="Long">
         select (max(id) +1) from attachments
     </select>
 
-    <update id="update" parameterType="com.web.template.attchments.domain.dto.AttachmentsDto">
+    <update id="update" parameterType="java.util.LinkedHashMap">
         update attachments set filename= #{filename} , filepath=#{filepath}, fakename=#{fakename}
         where id = #{id}
     </update>
 
-    <insert id="insert" parameterType="com.web.template.attchments.domain.dto.AttachmentsDto">
+    <insert id="insert" parameterType="java.util.LinkedHashMap">
         insert into attachments
         (id, fakename, filename, filepath)
         values (#{id},#{fakename}, #{filename}, #{filepath})
     </insert>
 
-    <delete id="delete" parameterType="com.web.template.attchments.domain.dto.AttachmentsDto">
+    <delete id="delete" parameterType="java.util.LinkedHashMap">
         delete from attachments
         where id = #{id}
     </delete>

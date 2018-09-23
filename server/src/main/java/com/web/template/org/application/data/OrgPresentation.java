@@ -1,12 +1,12 @@
 package com.web.template.org.application.data;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreType;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.modelmapper.ModelMapper;
 
 import java.util.List;
 
@@ -30,7 +30,11 @@ public class OrgPresentation {
     @JsonProperty("leaf")
     private Boolean leaf;
 
-    public void addChildren(OrgPresentation orgPresentation){
+    public void addChildren(OrgPresentation orgPresentation) {
         this.children.add(orgPresentation);
+    }
+
+    public static OrgPresentation convert(Object obj){
+        return new ModelMapper().map(obj, OrgPresentation.class);
     }
 }

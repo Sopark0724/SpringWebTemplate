@@ -1,6 +1,5 @@
 package com.web.template.board.domain.dao;
 
-import com.web.template.board.domain.dto.BoardDto;
 import com.web.template.common.application.data.PageCommand;
 import com.web.template.common.application.data.PagePresentation;
 import lombok.NonNull;
@@ -9,6 +8,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 @Repository
@@ -23,44 +23,46 @@ public class BoardDao {
         return nextId != null ? nextId : 1L;
     }
 
-    public PagePresentation<BoardDto> findAll(PageCommand pageListCommand) {
-        List<BoardDto> list = this.sqlSession.selectList("findBoardAll", null, pageListCommand.rowBounds());
-        int totalCount = this.sqlSession.selectOne("findCountAll", null);
-
-        return new PagePresentation<>(true, totalCount, list);
+    public int getTotalCount(){
+        return  this.sqlSession.selectOne("findCountAll", null);
     }
 
-    public BoardDto findById(Long id) {
+    public List<LinkedHashMap> findAll(PageCommand pageCommand) {
+
+        return this.sqlSession.selectList("findBoardAll", null, pageCommand.rowBounds());
+    }
+
+    public LinkedHashMap findById(Long id) {
         return this.sqlSession.selectOne("BoardDAO.findById", id);
     }
 
-    public List<BoardDto> saveAll(List<BoardDto> boardList) {
-        List<BoardDto> saveResult = new ArrayList<>();
+    public List<LinkedHashMap> saveAll(List<LinkedHashMap> boardList) {
+        List<LinkedHashMap> saveResult = new ArrayList<>();
 
-        for (BoardDto boardDto : boardList) {
+        for (LinkedHashMap boardDto : boardList) {
             saveResult.add(this.save(boardDto));
         }
         return saveResult;
-        //return boardList.stream().map(this::save).collect(Collectors.toList());
     }
 
-    public BoardDto save(BoardDto board) {
-        if (board.getId() != null) {
+    public LinkedHashMap save(LinkedHashMap board) {
+
+        if (board.get("id") != null) {
             this.sqlSession.update("BoardDAO.update", board);
         } else {
-            board.setId(this.getNextId());
+            board.put("id", this.getNextId());
             this.sqlSession.insert("BoardDAO.insert", board);
         }
-        return this.sqlSession.selectOne("BoardDAO.findById", board.getId());
+        return this.sqlSession.selectOne("BoardDAO.findById", board.get("id"));
     }
 
-    public void deleteAll(List<BoardDto> boardList) {
-        for (BoardDto boardDto : boardList) {
-            this.delete(boardDto);
+    public void deleteAll(List<LinkedHashMap> boardList) {
+        for (LinkedHashMap hashMap : boardList) {
+            this.delete(hashMap);
         }
     }
 
-    public void delete(BoardDto board) {
+    public void delete(LinkedHashMap board) {
         this.sqlSession.delete("BoardDAO.delete", board);
     }
 
