@@ -4,10 +4,7 @@ import com.web.template.TemplateApplication;
 import com.web.template.common.MockMvcHelper;
 import com.web.template.org.domain.dao.DepartmentDao;
 import com.web.template.org.domain.dao.DeptMemberDao;
-import com.web.template.org.domain.dto.DepartmentDto;
-import com.web.template.org.domain.dto.DeptMemberDto;
 import com.web.template.user.domain.dao.AccountDao;
-import com.web.template.user.domain.dto.AccountDto;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +12,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -44,17 +44,61 @@ public class OrgControllerTest {
     @Test
     public void getOrg() throws Exception {
         // Given
-        AccountDto account = accountRepository.save(new AccountDto("test1", "test1", "1234", "USER"));
-        DepartmentDto root = departmentRepository.save(new DepartmentDto("ROOT", null));
-        DepartmentDto sub1 = departmentRepository.save(new DepartmentDto("sub1", root.getId()));
-        deptMemberDao.save(new DeptMemberDto(null, account.getId(), sub1.getId()));
-        DepartmentDto sub2 = departmentRepository.save(new DepartmentDto("sub2", root.getId()));
-        deptMemberDao.save(new DeptMemberDto(null, account.getId(), sub2.getId()));
-        DepartmentDto sub3 = departmentRepository.save(new DepartmentDto("sub3", root.getId()));
+        LinkedHashMap<String, Object> accountMap = new LinkedHashMap();
+        accountMap.put("name", "test1");
+        accountMap.put("username", "test1");
+        accountMap.put("password", "1234");
+        accountMap.put("role", "USER");
 
-        DepartmentDto sub1_1 = departmentRepository.save(new DepartmentDto("sub1_1", sub1.getId()));
-        deptMemberDao.save(new DeptMemberDto(null, account.getId(), sub1_1.getId()));
-        DepartmentDto sub1_2 = departmentRepository.save(new DepartmentDto("sub1_2", sub1.getId()));
+        HashMap account = accountRepository.save(accountMap);
+        Long accountId = (Long) account.get("id");
+
+        LinkedHashMap<String, Object> addMap =new LinkedHashMap();
+        LinkedHashMap<String, Object> memberAddMap =new LinkedHashMap();
+        addMap.put("name", "ROOT");
+
+        LinkedHashMap root = departmentRepository.save(addMap);
+        addMap = new LinkedHashMap<>();
+        addMap.put("name", "sub1");
+        addMap.put("parent_id", (Long)root.get("id"));
+
+        LinkedHashMap sub1 = departmentRepository.save(addMap);
+
+        memberAddMap.put("account_id", accountId);
+        memberAddMap.put("department_id", (Long)sub1.get("id"));
+        deptMemberDao.save(memberAddMap);
+
+        addMap = new LinkedHashMap<>();
+        addMap.put("parent_id", (Long)root.get("id"));
+        addMap.put("name", "sub2");
+        LinkedHashMap sub2 = departmentRepository.save(addMap);
+
+        memberAddMap = new LinkedHashMap<>();
+        memberAddMap.put("account_id", accountId);
+        memberAddMap.put("department_id", (Long)sub2.get("id"));
+        deptMemberDao.save(memberAddMap);
+
+        addMap = new LinkedHashMap<>();
+        addMap.put("parent_id", (Long)root.get("id"));
+        addMap.put("name", "sub3");
+        LinkedHashMap sub3 = departmentRepository.save(addMap);
+
+
+        addMap = new LinkedHashMap<>();
+        addMap.put("parent_id", (Long)sub1.get("id"));
+        addMap.put("name", "sub1_1");
+
+        LinkedHashMap sub1_1 = departmentRepository.save(addMap);
+
+        memberAddMap = new LinkedHashMap<>();
+        memberAddMap.put("account_id", accountId);
+        memberAddMap.put("department_id", (Long)sub1_1.get("id"));
+        deptMemberDao.save(memberAddMap);
+
+        addMap = new LinkedHashMap<>();
+        addMap.put("parent_id", (Long)sub1.get("id"));
+        addMap.put("name", "sub1_2");
+        LinkedHashMap sub1_2 = departmentRepository.save(addMap);
 
         // When
         ResultActions resultAction =

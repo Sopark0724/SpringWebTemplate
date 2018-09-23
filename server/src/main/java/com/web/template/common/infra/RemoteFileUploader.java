@@ -13,7 +13,7 @@ import java.io.FileInputStream;
 @Slf4j
 public class RemoteFileUploader {
 
-    public static boolean remoteFileUpload(RemoteFileUploadCommand command){
+    public static boolean remoteFileUpload(RemoteFileUploadCommand command) {
         File file = new File(command.getLocalFilePath());
 
         System.out.println("=> Connecting to " + command.getHost());
@@ -41,7 +41,7 @@ public class RemoteFileUploader {
             channel = session.openChannel("sftp");
             channel.connect();
 
-            channelSftp = (ChannelSftp)channel;
+            channelSftp = (ChannelSftp) channel;
             log.info("=> Connected to {}", command.getHost());
 
             in = new FileInputStream(file);
@@ -52,7 +52,7 @@ public class RemoteFileUploader {
 
             System.out.println("=> Uploaded : " + file.getPath() + " at " + command.getHost());
             log.info("=> Uploaded : {} at {}", file.getPath(), command.getHost());
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         } finally {
@@ -61,7 +61,7 @@ public class RemoteFileUploader {
                 channelSftp.exit();
                 channel.disconnect();
                 session.disconnect();
-            } catch(Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }

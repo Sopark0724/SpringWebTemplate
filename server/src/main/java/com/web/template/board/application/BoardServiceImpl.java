@@ -1,25 +1,21 @@
 package com.web.template.board.application;
 
+import com.web.template.attchments.data.AttachmentsPresentation;
 import com.web.template.attchments.domain.dao.AttachmentsBoardMapDao;
 import com.web.template.attchments.domain.dao.AttachmentsDao;
-import com.web.template.attchments.domain.dto.AttachmentsBoardMapDto;
-import com.web.template.attchments.domain.dto.AttachmentsDto;
+import com.web.template.attchments.util.AttachmentsUtil;
 import com.web.template.board.application.data.BoardAddCommand;
-import com.web.template.board.application.data.BoardPresentation;
 import com.web.template.board.domain.dao.BoardDao;
-import com.web.template.board.domain.dto.BoardDto;
 import com.web.template.common.application.data.PageCommand;
 import com.web.template.common.application.data.PagePresentation;
 import com.web.template.user.domain.dao.AccountDao;
-import com.web.template.user.domain.dto.AccountDto;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.security.InvalidParameterException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -37,17 +33,28 @@ public class BoardServiceImpl implements BoardService {
     private final @NonNull
     AttachmentsDao attachmentsDao;
 
-    private AccountDto getAccount(Long id) {
-        AccountDto account = this.accountDao.findById(id);
+
+    private void checkOwner(LinkedHashMap account, LinkedHashMap board){
+        assert account != null && account.get("id") != null;
+        assert board != null && board.get("id") != null;
+
+        if (!board.get("user_id").equals(account.get("id"))) {
+            throw new InvalidParameterException();
+        }
+    }
+
+
+    private LinkedHashMap getAccount(Long id) {
+        LinkedHashMap account = this.accountDao.findById(id);
         if (account == null) {
             throw new NoSuchElementException();
         }
         return account;
     }
 
-    private BoardDto getBoard(Long id) {
+    private LinkedHashMap getBoard(Long id) {
 
-        BoardDto board = this.boardDao.findById(id);
+        LinkedHashMap board = this.boardDao.findById(id);
 
         if (board == null) {
             throw new NoSuchElementException();
@@ -56,67 +63,82 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public BoardPresentation create(BoardAddCommand boardAddCommand, Long creatorId) {
+    public Map create(BoardAddCommand boardAddCommand, Long creatorId) {
 
-        AccountDto account = this.getAccount(creatorId);
+        HashMap account = this.getAccount(creatorId);
+        LinkedHashMap<String, Object> board = new LinkedHashMap<>();
+        board.put("user_id", account.get("id"));
+        board.put("title", boardAddCommand.getTitle());
+        board.put("contents", boardAddCommand.getContents());
 
-        BoardDto board = this.boardDao.save(new BoardDto(account, boardAddCommand.getTitle(), boardAddCommand.getContents()));
-        return BoardPresentation.convertFromDto(board, account);
+        return this.boardDao.save(board);
     }
 
     @Override
-    public BoardPresentation update(Long boardId, BoardAddCommand boardAddCommand, Long requestUserId) {
-        AccountDto account = this.getAccount(requestUserId);
-        BoardDto board = this.getBoard(boardId);
+    public Map update(Long boardId, BoardAddCommand boardAddCommand, Long requestUserId) {
+        LinkedHashMap account = this.getAccount(requestUserId);
+        LinkedHashMap board = this.getBoard(boardId);
 
-        if (board.canNotUpdate(account)) {
-            throw new InvalidParameterException();
-        }
+        this.checkOwner(account, board);
 
-        board.update(boardAddCommand.getTitle(), boardAddCommand.getContents());
+
+        board.put("title", boardAddCommand.getTitle());
+        board.put("contents", boardAddCommand.getContents());
 
         board = this.boardDao.save(board);
 
-        return BoardPresentation.convertFromDto(board, account);
+        board.put("writer_name", account.get("name"));
+
+        return board;
+
     }
 
     @Override
     public void delete(Long id, Long requestUserId) {
-        AccountDto account = this.getAccount(requestUserId);
-        BoardDto board = this.getBoard(id);
-        if (board.canNotDelete(account)) {
-            throw new InvalidParameterException();
-        }
+        LinkedHashMap account = this.getAccount(requestUserId);
+        LinkedHashMap board = this.getBoard(id);
+        this.checkOwner(account, board);
 
         this.boardDao.delete(board);
     }
 
     @Override
-    public BoardPresentation get(Long boardId) {
-        BoardDto board = this.getBoard(boardId);
-        AccountDto account = this.getAccount(board.getUser_id());
+    public Map get(Long boardId) {
 
-        List<AttachmentsBoardMapDto> attachmentsBoardMaps = this.attachmentsBoardMapDao.findByBoard(board);
-        List<AttachmentsDto> attachmentsDtos = new ArrayList<>();
-        for (AttachmentsBoardMapDto attachmentsBoardMap : attachmentsBoardMaps) {
-            attachmentsDtos.add(this.attachmentsDao.findById(attachmentsBoardMap.getAttachments_id()));
+        LinkedHashMap board = this.getBoard(boardId);
+        HashMap account = this.getAccount((Long) board.get("user_id"));
+
+        List<LinkedHashMap> attachmentsBoardMaps = this.attachmentsBoardMapDao.findByBoard(board);
+        List<LinkedHashMap> attachmentsDtos = new ArrayList<>();
+        for (LinkedHashMap attachmentsBoardMap : attachmentsBoardMaps) {
+            attachmentsDtos.add(this.attachmentsDao.findById((Long) attachmentsBoardMap.get("attachments_id")));
         }
 
-        return BoardPresentation.convertFromDto(board, account, attachmentsDtos);
+        board.put("writer_name", account.get("name"));
+
+        List<AttachmentsPresentation> attachmentsPresentations =
+                attachmentsDtos.stream().map(att -> AttachmentsPresentation.convertFrom(att)).collect(Collectors.toList());
+
+        board.put("attachments", attachmentsPresentations);
+
+        return board;
     }
 
     @Override
-    public PagePresentation<BoardPresentation> getList(PageCommand pageListCommand) {
-        PagePresentation<BoardDto> list = this.boardDao.findAll(pageListCommand);
+    public PagePresentation<Map> getList(PageCommand pageListCommand) {
 
-        List<BoardPresentation> result = new ArrayList<>();
+        int totalCount = this.boardDao.getTotalCount();
+        List<LinkedHashMap> boardList = this.boardDao.findAll(pageListCommand);
 
-        for (BoardDto boardDto : list.getItems()) {
-            result.add(BoardPresentation.convertFromDto(boardDto, this.getAccount(boardDto.getUser_id())));
+        List<Map> result = new ArrayList<>();
+
+        for (LinkedHashMap board : boardList) {
+            LinkedHashMap account = this.getAccount((Long) board.get("user_id"));
+            board.put("writerName", account.get("name"));
+            result.add(board);
         }
 
-
-        return new PagePresentation<>(true, list.getResults(), result);
+        return new PagePresentation<Map>(true, totalCount, result);
 
     }
 }

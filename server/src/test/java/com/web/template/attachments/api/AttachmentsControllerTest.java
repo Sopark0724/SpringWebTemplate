@@ -5,11 +5,9 @@ import com.web.template.TemplateApplication;
 import com.web.template.attchments.data.AttachmentsPresentation;
 import com.web.template.board.application.BoardService;
 import com.web.template.board.application.data.BoardAddCommand;
-import com.web.template.board.application.data.BoardPresentation;
 import com.web.template.common.AbstractServiceHelper;
 import com.web.template.common.AccountTestService;
 import com.web.template.common.MockMvcHelper;
-import com.web.template.user.application.data.AccountPresentation;
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -27,6 +25,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -53,12 +52,12 @@ public class AttachmentsControllerTest extends AbstractServiceHelper {
 
     @Test
     public void test_01_uploadfile() throws Exception {
-        AccountPresentation account = accountService.getTestAccount();
-        BoardPresentation board = this.boardService.create(BoardAddCommand.builder().title("test title").contents("test content").build(), account.getId());
+        Map account = accountService.getTestAccount();
+        Map board = this.boardService.create(BoardAddCommand.builder().title("test title").contents("test content").build(), (Long) account.get("id"));
 
         // Given
         MockMultipartFile mockMultipartFile = new MockMultipartFile("file", "testfile.txt", MediaType.TEXT_PLAIN_VALUE, "testFileContent".getBytes());
-        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart("/attachments/upload/BOARD/" + board.getId()).file(mockMultipartFile);
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart("/attachments/upload/BOARD/" + board.get("id")).file(mockMultipartFile);
 
 
         // When

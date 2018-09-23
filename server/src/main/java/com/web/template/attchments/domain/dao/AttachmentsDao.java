@@ -1,12 +1,13 @@
 package com.web.template.attchments.domain.dao;
 
-import com.web.template.attchments.domain.dto.AttachmentsDto;
+import com.web.template.attchments.util.AttachmentsUtil;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 @Repository
@@ -16,14 +17,15 @@ public class AttachmentsDao {
     private final @NonNull
     SqlSession sqlSession;
 
-    public List<AttachmentsDto> findAll() {
+    public List<LinkedHashMap> findAll() {
         return this.sqlSession.selectList("AttachmentsDAO.findAll");
     }
 
-    public AttachmentsDto findById(Long id) {
+    public LinkedHashMap findById(Long id) {
         return this.sqlSession.selectOne("AttachmentsDAO.findById", id);
     }
-    public AttachmentsDto findByFakename(String fakename) {
+
+    public LinkedHashMap findByFakename(String fakename) {
         return this.sqlSession.selectOne("AttachmentsDAO.findByFakename", fakename);
     }
 
@@ -32,17 +34,17 @@ public class AttachmentsDao {
         return nextId == null ? 1L : nextId;
     }
 
-    public List<AttachmentsDto> saveAll(List<AttachmentsDto> attachmentsDtos) {
-        List<AttachmentsDto> savedList = new ArrayList<>();
-        for (AttachmentsDto attachmentsDto : attachmentsDtos) {
+    public List<LinkedHashMap> saveAll(List<LinkedHashMap> attachmentsDtos) {
+        List<LinkedHashMap> savedList = new ArrayList<>();
+        for (LinkedHashMap attachmentsDto : attachmentsDtos) {
             savedList.add(this.save(attachmentsDto));
         }
         return savedList;
     }
 
-    public AttachmentsDto save(AttachmentsDto attachmentsDto) {
-        if (attachmentsDto.getId() == null) {
-            attachmentsDto.setId(this.getNextId());
+    public LinkedHashMap save(LinkedHashMap attachmentsDto) {
+        if (attachmentsDto.get("id") == null) {
+            attachmentsDto.put("id", this.getNextId());
             sqlSession.insert("AttachmentsDAO.insert", attachmentsDto);
         } else {
             sqlSession.update("AttachmentsDAO.update", attachmentsDto);
@@ -50,13 +52,13 @@ public class AttachmentsDao {
         return attachmentsDto;
     }
 
-    public void deleteAll(List<AttachmentsDto> attachmentsDtos) {
-        for (AttachmentsDto attachmentsDto : attachmentsDtos) {
+    public void deleteAll(List<LinkedHashMap> attachmentsDtos) {
+        for (LinkedHashMap attachmentsDto : attachmentsDtos) {
             this.delete(attachmentsDto);
         }
     }
 
-    public void delete(AttachmentsDto attachmentsDto) {
+    public void delete(LinkedHashMap attachmentsDto) {
         sqlSession.delete("AttachmentsDAO.delete", attachmentsDto);
     }
 

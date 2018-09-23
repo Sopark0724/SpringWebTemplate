@@ -1,7 +1,6 @@
 package com.web.template.user.service;
 
 import com.web.template.user.domain.dao.AccountDao;
-import com.web.template.user.domain.dto.AccountDto;
 import com.web.template.user.model.AccountDetails;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +8,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
 
 @Service
 @RequiredArgsConstructor
@@ -19,7 +20,7 @@ public class AccountDetailService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        AccountDto account = this.accountDao.findFirsByUsername(username);
+        HashMap account = this.accountDao.findFirsByUsername(username);
         if (account == null) {
             throw new UsernameNotFoundException(username);
         }

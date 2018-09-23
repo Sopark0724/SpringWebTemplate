@@ -1,10 +1,10 @@
 package com.web.template.org.domain.dao;
 
-import com.web.template.org.domain.dto.DeptMemberDto;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 
 @Repository
@@ -17,15 +17,15 @@ public class DeptMemberDao {
         return nextId != null ? nextId : 1L;
     }
 
-    public List<DeptMemberDto> findByParent(Long departmentId){
+    public List<LinkedHashMap> findByParent(Long departmentId) {
         return sqlSession.selectList("DeptMemberDao.findByDepartment", departmentId);
     }
 
-    public DeptMemberDto save(DeptMemberDto deptMemberDto) {
-        if(deptMemberDto.getId() == null) {
-            deptMemberDto.setId(this.getNextId());
+    public LinkedHashMap save(LinkedHashMap deptMemberDto) {
+        if (deptMemberDto.get("id") == null) {
+            deptMemberDto.put("id", this.getNextId());
             sqlSession.insert("DeptMemberDao.insert", deptMemberDto);
-        }else{
+        } else {
             sqlSession.update("DeptMemberDao.update", deptMemberDto);
         }
 

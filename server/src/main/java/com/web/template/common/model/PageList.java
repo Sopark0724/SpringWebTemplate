@@ -7,11 +7,10 @@ import java.util.List;
 @Data
 public class PageList<T> {
 
+    List<T> data;
     private int offset;
     private int currnetPage;
     private int totalElements;
-
-    List<T> data;
 
     public int getTotalPages() {
         return totalElements / offset + (totalElements % offset != 0 ? 1 : 0);

@@ -21,8 +21,8 @@ public class MockMvcHelper {
     @Autowired
     public MockMvcHelper(WebApplicationContext wac) {
         this.mockMvc = MockMvcBuilders
-            .webAppContextSetup(wac)
-            .build();
+                .webAppContextSetup(wac)
+                .build();
     }
 
     public ResultActions perform(MockHttpServletRequestBuilder request) throws Exception {

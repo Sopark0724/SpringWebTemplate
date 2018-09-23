@@ -1,6 +1,6 @@
 package com.web.template.attchments.map.component;
 
-import com.web.template.attchments.domain.dto.AttachmentsDto;
+import com.web.template.attchments.util.AttachmentsUtil;
 import com.web.template.attchments.type.AttachmentsType;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -33,7 +34,7 @@ public class AttachMapManager {
         });
     }
 
-    public void map(@NonNull AttachmentsType attachmentsType, @NonNull AttachmentsDto attachments, @NonNull Long id) {
+    public void map(@NonNull AttachmentsType attachmentsType, @NonNull LinkedHashMap attachments, @NonNull Long id) {
         AttachMap mapper = this.attachmentsMapperMap.get(attachmentsType);
         if (mapper == null) {
             throw new NullPointerException();

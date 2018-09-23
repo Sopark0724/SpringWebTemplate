@@ -2,10 +2,11 @@ package com.web.template.user.application;
 
 import com.web.template.common.AbstractServiceHelper;
 import com.web.template.user.application.data.AccountAddCommand;
-import com.web.template.user.application.data.AccountPresentation;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -23,8 +24,8 @@ public class UserServiceTest extends AbstractServiceHelper {
         AccountAddCommand accountAddCommand = AccountAddCommand.builder().name("홍길동").username("hong").password("1234").role("USER").build();
 
         // When
-        AccountPresentation accountPresentation = accountService.create(accountAddCommand);
-        AccountPresentation result = accountService.findById(accountPresentation.getId());
+        Map accountPresentation = accountService.create(accountAddCommand);
+        Map result = accountService.findById((Long) accountPresentation.get("id"));
 
         // Then
         System.out.println(result.toString());

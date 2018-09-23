@@ -8,7 +8,6 @@ import com.web.template.org.application.data.DepartmentAddCommand;
 import com.web.template.org.application.data.DepartmentPresentation;
 import com.web.template.org.application.data.DeptMemberAddCommand;
 import com.web.template.org.application.data.OrgPresentation;
-import com.web.template.user.application.data.AccountPresentation;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Test;
@@ -17,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Map;
 
 
 @Transactional
@@ -46,24 +47,24 @@ public class OrgServiceTest extends AbstractServiceHelper {
     @Test
     public void getTree() {
         // Given
-        AccountPresentation account = accountService.getTestAccount();
+        Map account = accountService.getTestAccount();
 
         DepartmentPresentation dept = service.create(new DepartmentAddCommand(null, "test"));
-        service.addMember(new DeptMemberAddCommand(dept.getId(), account.getId()));
+        service.addMember(new DeptMemberAddCommand(dept.getId(), (Long)account.get("id")));
 
         DepartmentPresentation dept1 = service.create(new DepartmentAddCommand(dept.getId(), "test1"));
 
         DepartmentPresentation dept2 = service.create(new DepartmentAddCommand(dept.getId(), "test2"));
-        service.addMember(new DeptMemberAddCommand(dept2.getId(), account.getId()));
+        service.addMember(new DeptMemberAddCommand(dept2.getId(), (Long)account.get("id")));
 
         DepartmentPresentation dept1_1 = service.create(new DepartmentAddCommand(dept1.getId(), "test1_1"));
-        service.addMember(new DeptMemberAddCommand(dept1_1.getId(), account.getId()));
-        service.addMember(new DeptMemberAddCommand(dept1_1.getId(), account.getId()));
+        service.addMember(new DeptMemberAddCommand(dept1_1.getId(), (Long)account.get("id")));
+        service.addMember(new DeptMemberAddCommand(dept1_1.getId(), (Long)account.get("id")));
 
         DepartmentPresentation dept1_2 = service.create(new DepartmentAddCommand(dept1.getId(), "test1_2"));
-        service.addMember(new DeptMemberAddCommand(dept1_2.getId(), account.getId()));
-        service.addMember(new DeptMemberAddCommand(dept1_2.getId(), account.getId()));
-        service.addMember(new DeptMemberAddCommand(dept1_2.getId(), account.getId()));
+        service.addMember(new DeptMemberAddCommand(dept1_2.getId(), (Long)account.get("id")));
+        service.addMember(new DeptMemberAddCommand(dept1_2.getId(), (Long)account.get("id")));
+        service.addMember(new DeptMemberAddCommand(dept1_2.getId(), (Long)account.get("id")));
 
         // When
         OrgPresentation tree = service.getTree();

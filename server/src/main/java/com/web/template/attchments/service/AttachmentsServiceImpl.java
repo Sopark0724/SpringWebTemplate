@@ -3,11 +3,9 @@ package com.web.template.attchments.service;
 import com.web.template.attchments.data.AttachmentsPresentation;
 import com.web.template.attchments.domain.dao.AttachmentsBoardMapDao;
 import com.web.template.attchments.domain.dao.AttachmentsDao;
-import com.web.template.attchments.domain.dto.AttachmentsBoardMapDto;
-import com.web.template.attchments.domain.dto.AttachmentsDto;
+import com.web.template.attchments.util.AttachmentsUtil;
 import com.web.template.attchments.type.AttachmentsType;
 import com.web.template.board.domain.dao.BoardDao;
-import com.web.template.board.domain.dto.BoardDto;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +19,7 @@ import org.springframework.web.server.UnsupportedMediaTypeStatusException;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -46,9 +45,9 @@ public class AttachmentsServiceImpl implements AttachmentsService {
         }
 
         List<MultipartFile> mfiles = new ArrayList<>();
-        List<AttachmentsDto> attachmentsList = new ArrayList<>();
+        List<LinkedHashMap> attachmentsList = new ArrayList<>();
 
-        BoardDto boardDto = this.boardDao.findById(id);
+        LinkedHashMap boardDto = this.boardDao.findById(id);
 
         for (Map.Entry<String, List<MultipartFile>> entry : mReq.getMultiFileMap().entrySet()) {
             mfiles.addAll(entry.getValue());
@@ -58,7 +57,7 @@ public class AttachmentsServiceImpl implements AttachmentsService {
 
         for (MultipartFile mfile : mfiles) {
             try {
-                attachmentsList.add(AttachmentsDto.convert(mfile));
+                attachmentsList.add(AttachmentsUtil.convert(mfile));
             } catch (IOException e) {
                 log.error("attachments convert error : Io Exception " + e.getMessage());
             }
@@ -66,15 +65,18 @@ public class AttachmentsServiceImpl implements AttachmentsService {
         List<AttachmentsPresentation> resultList = new ArrayList<>();
         attachmentsList = this.attachmentsDao.saveAll(attachmentsList);
 
-        for (AttachmentsDto attachmentsDto : attachmentsList) {
-            this.attachmentsBoardMapDao.save(AttachmentsBoardMapDto.mapping(boardDto, attachmentsDto));
+        for (LinkedHashMap attachmentsDto : attachmentsList) {
+            LinkedHashMap map = new LinkedHashMap();
+            map.put("board_id", (Long)boardDto.get("id"));
+            map.put("attachments_id", (Long)attachmentsDto.get("id"));
+            this.attachmentsBoardMapDao.save(map);
             resultList.add(AttachmentsPresentation.convertFrom(attachmentsDto));
         }
         return resultList;
     }
 
     public HttpEntity<byte[]> downloadFile(String fakename) {
-        AttachmentsDto attachments = this.attachmentsDao.findByFakename(fakename);
+        LinkedHashMap attachments = this.attachmentsDao.findByFakename(fakename);
 
         if (attachments == null) {
             throw new NullPointerException();
@@ -82,13 +84,13 @@ public class AttachmentsServiceImpl implements AttachmentsService {
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        httpHeaders.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + attachments.getFilename().replace(" ", "_"));
+        httpHeaders.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + ((String)attachments.get("filename")).replace(" ", "_"));
 
         byte[] content = null;
         try {
-            content = attachments.readContent();
+            content = AttachmentsUtil.readContent(attachments);
         } catch (IOException e) {
-            log.error("file read error : " + attachments.getFilepath());
+            log.error("file read error : " + attachments.get("filepath"));
             throw new NullPointerException();
         }
 

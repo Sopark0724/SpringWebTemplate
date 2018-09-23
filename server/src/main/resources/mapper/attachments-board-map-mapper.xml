@@ -3,11 +3,11 @@
 
 
 <mapper namespace="AttachmentsBoardMapDAO">
-    <select id="findAll" resultType="com.web.template.attchments.domain.dto.AttachmentsBoardMapDto">
+    <select id="findAll" resultType="java.util.LinkedHashMap">
         select * from attachments_board_map
     </select>
 
-    <select id="findById" resultType="com.web.template.attchments.domain.dto.AttachmentsBoardMapDto">
+    <select id="findById" resultType="java.util.LinkedHashMap">
         select * from attachments_board_map where id = #{id}
     </select>
 
@@ -15,23 +15,42 @@
         select (max(id) +1) from attachments_board_map
     </select>
 
-    <select id="findByBoard" parameterType="com.web.template.board.domain.dto.BoardDto" resultType="com.web.template.attchments.domain.dto.AttachmentsBoardMapDto" >
+    <select id="findByBoard" parameterType="java.util.LinkedHashMap"
+            resultType="java.util.LinkedHashMap">
         select * from attachments_board_map
         where board_id = #{id}
     </select>
 
-    <update id="update" parameterType="com.web.template.attchments.domain.dto.AttachmentsBoardMapDto">
-        update attachments_board_map set board_id=#{board_id}, attachments_id=#{attachments_id}
+
+    <update id="update" parameterType="java.util.LinkedHashMap">
+        update attachments_board_map set
+
+        <foreach collection="_parameter.entrySet()" item="value" index="key" separator=" ,">
+          <if test="key != 'id'">
+            ${key} = #{value}
+          </if>
+        </foreach>
+
         where id = #{id}
     </update>
 
-    <insert id="insert" parameterType="com.web.template.attchments.domain.dto.AttachmentsBoardMapDto">
+    <insert id="insert" parameterType="java.util.LinkedHashMap">
         insert into attachments_board_map
-        (id, board_id, attachments_id)
-        values (#{id},#{board_id}, #{attachments_id} )
+
+        <foreach collection="_parameter.entrySet()" item="value" index="key" open="("  separator=" ,"  close=")">
+            ${key}
+        </foreach>
+
+        values
+
+        <foreach collection="_parameter.entrySet()" item="value" index="key" open="("  separator=" ,"  close=")">
+          #{value}
+        </foreach>
+
+
     </insert>
 
-    <delete id="delete" parameterType="com.web.template.attchments.domain.dto.AttachmentsBoardMapDto">
+    <delete id="delete" parameterType="java.util.LinkedHashMap">
         delete from attachments_board_map
         where id = #{id}
     </delete>
