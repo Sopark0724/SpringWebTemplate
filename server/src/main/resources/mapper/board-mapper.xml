@@ -32,15 +32,33 @@
 
 
     <update id="update" parameterType="java.util.LinkedHashMap">
-        update board set contents = #{contents} , title =#{title} , user_id = #{user_id} , updated_at = getdate()
+        update board set
+
+        <foreach collection="_parameter.entrySet()" item="value" index="key"  separator=" ,">
+          <if test="key != 'id'">
+            ${key} = #{value}
+          </if>
+        </foreach>
+
         where id = #{id}
     </update>
 
     <insert id="insert" parameterType="java.util.LinkedHashMap">
         insert into board
-        (id, contents, title, user_id, created_at, updated_at)
-        values (#{id}, #{contents}, #{title}, #{user_id}, getdate() , getdate() )
+
+        <foreach collection="_parameter.entrySet()" item="value" index="key" open="("  separator=" ,"  close=")">
+            ${key}
+        </foreach>
+
+        values
+
+        <foreach collection="_parameter.entrySet()" item="value" index="key" open="("  separator=" ,"  close=")">
+          #{value}
+        </foreach>
+
+
     </insert>
+
 
     <delete id="delete" parameterType="java.util.LinkedHashMap">
         delete from board

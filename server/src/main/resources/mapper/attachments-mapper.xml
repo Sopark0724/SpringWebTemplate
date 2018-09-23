@@ -19,15 +19,33 @@
     </select>
 
     <update id="update" parameterType="java.util.LinkedHashMap">
-        update attachments set filename= #{filename} , filepath=#{filepath}, fakename=#{fakename}
+        update attachments set
+
+        <foreach collection="_parameter.entrySet()" item="value" index="key" separator=" ,">
+          <if test="key != 'id'">
+            ${key} = #{value}
+          </if>
+        </foreach>
+
         where id = #{id}
     </update>
 
     <insert id="insert" parameterType="java.util.LinkedHashMap">
         insert into attachments
-        (id, fakename, filename, filepath)
-        values (#{id},#{fakename}, #{filename}, #{filepath})
+
+        <foreach collection="_parameter.entrySet()" item="value" index="key" open="("  separator=" ,"  close=")">
+            ${key}
+        </foreach>
+
+        values
+
+        <foreach collection="_parameter.entrySet()" item="value" index="key" open="("  separator=" ,"  close=")">
+          #{value}
+        </foreach>
+
+
     </insert>
+
 
     <delete id="delete" parameterType="java.util.LinkedHashMap">
         delete from attachments

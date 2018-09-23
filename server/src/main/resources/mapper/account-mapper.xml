@@ -24,14 +24,31 @@
     </select>
 
     <update id="update" parameterType="java.util.LinkedHashMap">
-        update account set name = #{name} , password=#{password} , role= #{role} , username= #{username}
+        update account set
+
+        <foreach collection="_parameter.entrySet()" item="value" index="key"  separator=" ," >
+          <if test="key != 'id'">
+            ${key} = #{value}
+          </if>
+        </foreach>
+
         where id = #{id}
     </update>
 
     <insert id="insert" parameterType="java.util.LinkedHashMap">
         insert into account
-        (id, name, password, role, username)
-        values (#{id}, #{name}, #{password}, #{role}, #{username})
+
+        <foreach collection="_parameter.entrySet()" item="value" index="key" open="("  separator=" ,"  close=")">
+            ${key}
+        </foreach>
+
+        values
+
+        <foreach collection="_parameter.entrySet()" item="value" index="key" open="("  separator=" ,"  close=")">
+          #{value}
+        </foreach>
+
+
     </insert>
 
     <delete id="delete" parameterType="java.util.LinkedHashMap">

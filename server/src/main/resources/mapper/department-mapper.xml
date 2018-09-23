@@ -22,15 +22,34 @@
         select * from department where parent_id = #{parent_id}
     </select>
 
+
     <update id="update" parameterType="java.util.LinkedHashMap">
-        update department set name = #{name} , parent_id=#{parent_id}
+        update department set
+
+        <foreach collection="_parameter.entrySet()" item="value" index="key"  separator=" ,">
+          <if test="key != 'id'">
+            ${key} = #{value}
+          </if>
+        </foreach>
+
         where id = #{id}
     </update>
 
     <insert id="insert" parameterType="java.util.LinkedHashMap">
         insert into department
-        (id, name, parent_id)
-        values (#{id}, #{name}, #{parent_id})
+
+        <foreach collection="_parameter.entrySet()" item="value" index="key" open="("  separator=" ,"  close=")">
+            ${key}
+        </foreach>
+
+        values
+
+        <foreach collection="_parameter.entrySet()" item="value" index="key" open="("  separator=" ,"  close=")">
+          #{value}
+        </foreach>
+
+
     </insert>
+
 
 </mapper>
